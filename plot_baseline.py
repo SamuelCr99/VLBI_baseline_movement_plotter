@@ -3,13 +3,13 @@ import pandas as pd
 import numpy as np
 import math
 
-def plot_lines(data_file):
+def plot_lines():
 
     # Read in the data
     distance = []
     year = []
 
-    data = pd.read_csv(data_file, delim_whitespace=True)
+    data = pd.read_csv('matching_rows.csv', delim_whitespace=True)
 
     for i in range(len(data)):
         distance.append(data.loc[i].length)
@@ -54,4 +54,4 @@ def plot_lines(data_file):
     plt.show()
 
 if __name__ == '__main__':
-    plot_lines('matching_rows.csv')
+    plot_lines()
