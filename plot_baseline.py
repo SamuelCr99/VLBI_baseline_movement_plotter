@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import math
 
-def plot_lines():
+def plot_lines(metric,plotTypes):
 
     # Read in the data
     distance = []
@@ -12,8 +12,11 @@ def plot_lines():
     data = pd.read_csv('matching_rows.csv', delim_whitespace=True)
 
     for i in range(len(data)):
-        distance.append(data.loc[i].length)
+        distance.append(getattr(data.loc[i], metric))
         year.append(data.loc[i].year)
+
+    distance_original = distance
+    year_original = year
 
     # Trim the data
     while(1):
@@ -30,7 +33,6 @@ def plot_lines():
             residuals.append(residual)
             standard_deviation += pow(residual,2)
         standard_deviation = math.sqrt(standard_deviation/len(year))
-        print(standard_deviation)
 
         # Remove data with large deviation
         distance_trimmed = []
@@ -47,11 +49,28 @@ def plot_lines():
         distance = distance_trimmed
 
     # Plot baseline distance to time
-    plt.text(year_trimmed[int(len(year_trimmed)/4)], distance_trimmed[0], f'Total number of datapoints: {len(year_trimmed)}', fontsize = 12)
-    plt.plot(year_trimmed, distance_trimmed)
-    plt.xlabel('Year')
-    plt.ylabel('Distance [mm]') # Check with John that this is correct! 
+    figure_num = 0
+
+    if plotTypes["scatter"] == True:
+        figure_num+=1
+        plt.figure(figure_num)
+        plt.text(year_original[int(len(year_original)/4)], distance_original[0], f'Total number of datapoints: {len(year_original)}', fontsize = 12)
+        plt.plot(year_original, distance_original)
+        plt.xlabel('Year')
+        plt.ylabel('Distance [mm]') # Check with John that this is correct! 
+
+    if plotTypes["scatterTrimmed"] == True:
+        figure_num+=1
+        plt.figure(figure_num)
+        plt.text(year_trimmed[int(len(year_trimmed)/4)], distance_trimmed[0], f'Total number of datapoints: {len(year_trimmed)}', fontsize = 12)
+        plt.plot(year_trimmed, distance_trimmed)
+        plt.xlabel('Year')
+        plt.ylabel('Distance [mm]') # Check with John that this is correct! 
     plt.show()
 
 if __name__ == '__main__':
-    plot_lines()
+    plotTypes = {
+    "scatter": True,
+    "scatterTrimmed": True
+    }
+    plot_lines('length',plotTypes)
