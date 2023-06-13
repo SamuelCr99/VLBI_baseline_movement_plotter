@@ -5,11 +5,26 @@ import math
 
 
 def plot_lines(metric, plotSettings):
+    """
+    Plots the given metric in the matching_rows.csv file using the plotSettings.
+
+    Using the plotSettings parameter, the types of plots produced (scatter
+    and/or residual) is decided, as well as the data going in (raw data and/or
+    trimmed data) and if a trend line should be drawn.
+
+    Parameters:
+    metric (string): The metric that should be plotted. Can be either "length",
+    "transverse" or "horizontal".
+    plotSettings (list): A list of booleans for the settings to be used when
+    plotting.
+
+    Returns:
+    No return values!
+    """
 
     # Read in the data
     distance = []
     year = []
-
     data = pd.read_csv('data/matching_rows.csv', delim_whitespace=True)
 
     for i in range(len(data)):

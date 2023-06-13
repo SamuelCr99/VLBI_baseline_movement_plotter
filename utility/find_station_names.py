@@ -2,6 +2,18 @@ import pandas as pd
 
 
 def find_station_names():
+    """
+    Finds all station names 
+
+    Finds all different station names available in CSV file
+
+    Parameters:
+    No parameters! 
+
+    Returns:
+    No return values! 
+    """
+
     # Read in CSV file as Pandas dataframes
     lines_as_df = pd.read_csv(
         'data/2023a_bas_apriori.csv', delim_whitespace=True)
@@ -11,7 +23,8 @@ def find_station_names():
     lines = lines.readlines()
     stations = []
 
-    # Finds all rows where both stations are present
+    # Looks at all stations if station is not already found add it to 
+    # stations list
     for i in range(len(lines_as_df)):
         locations = lines_as_df.loc[i].locations
         split_locations = locations.split('/')
@@ -22,7 +35,7 @@ def find_station_names():
     stations.sort()
     f = open('data/stations.txt', 'w')
 
-    # Writes matching rows to new CSV file
+    # Write all station files to new file
     for station in stations:
         f.write(f'{station}\n')
 

@@ -3,7 +3,6 @@ from find_matching_station_data import find_matching_station_data
 from plot_baseline import plot_lines
 import json
 
-sg.SetOptions(font=("Andalde Mono", 12))
 
 available_second_stations = []
 with open('data/matching_stations.json', 'r') as json_file:
@@ -11,7 +10,10 @@ with open('data/matching_stations.json', 'r') as json_file:
 
 stations = list(matching_stations.keys())
 
+# Define the layout of the GUI
 sg.theme("DarkBlue")
+sg.SetOptions(font=("Andalde Mono", 12))
+
 station1_col = [[sg.Text("First station")],
                 [sg.Listbox(key='first_station', values=stations, size=(30, 30), enable_events=True)]]
 
@@ -50,6 +52,7 @@ layout = [[sg.Column(station1_col), sg.Column(station2_col)],
 window = sg.Window('VLBI Baseline Plotter', layout)
 return_values = {}
 
+# Define what the events (button presses and selections) do
 scatterDisabled = False
 residualDisabled = False
 
@@ -97,12 +100,8 @@ plotSettings = {
     "residualTrimmed": return_values["residualTrimmed"],
     "residualLine": True
 }
-
 metric = "length" if return_values["length"] else "transverse"
 metric = "transverse" if return_values["transverse"] else "horizontal"
-
-print(station1)
-print(station2)
 
 find_matching_station_data(station1, station2)
 plot_lines(metric, plotSettings)
