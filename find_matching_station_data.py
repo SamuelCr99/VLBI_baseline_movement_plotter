@@ -1,8 +1,10 @@
 import pandas as pd
 
+
 def find_matching_station_data(station1, station2):
     # Read in CSV file as Pandas dataframes
-    lines_as_df = pd.read_csv('data/2023a_bas_apriori.csv', delim_whitespace=True)
+    lines_as_df = pd.read_csv(
+        'data/2023a_bas_apriori.csv', delim_whitespace=True)
 
     # Read in CSV file as plain text
     lines = open('data/2023a_bas_apriori.csv', 'r')
@@ -10,7 +12,7 @@ def find_matching_station_data(station1, station2):
     rows_of_interest = []
 
     # Finds all rows where both stations are present
-    for i in range(len(lines_as_df)): 
+    for i in range(len(lines_as_df)):
         locations = lines_as_df.loc[i].locations
         split_locations = locations.split('/')
         if station1 in split_locations and station2 in split_locations:
@@ -28,6 +30,7 @@ def find_matching_station_data(station1, station2):
         f.write(row)
 
     f.close()
+
 
 if __name__ == '__main__':
     find_matching_station_data('KOKEE___', 'WETTZELL')

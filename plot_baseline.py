@@ -3,7 +3,8 @@ import pandas as pd
 import numpy as np
 import math
 
-def plot_lines(metric,plotSettings):
+
+def plot_lines(metric, plotSettings):
 
     # Read in the data
     distance = []
@@ -23,7 +24,7 @@ def plot_lines(metric,plotSettings):
     year_raw = year
 
     # Trim the data
-    while(1):
+    while (1):
 
         # Get the residuals from the trendline
         trendline = np.polyfit(year, distance, 1)
@@ -35,7 +36,7 @@ def plot_lines(metric,plotSettings):
             correct_distance = trendline[0]*year[i] + trendline[1]
             residual = distance[i] - correct_distance
             residuals.append(residual)
-            standard_deviation += pow(residual,2)
+            standard_deviation += pow(residual, 2)
         standard_deviation = math.sqrt(standard_deviation/len(year))
 
         # Remove data with large deviation
@@ -44,7 +45,8 @@ def plot_lines(metric,plotSettings):
         residuals_trimmed = []
 
         for i in range(len(year)):
-            if abs(residuals[i]) < standard_deviation*2:        # Two sigma is considered "large" deviation, check with John
+            # Two sigma is considered "large" deviation, check with John
+            if abs(residuals[i]) < standard_deviation*2:
                 distance_trimmed.append(distance[i])
                 year_trimmed.append(year[i])
                 residuals_trimmed.append(residuals[i])
@@ -58,30 +60,35 @@ def plot_lines(metric,plotSettings):
     figure_num = 0
 
     if plotSettings["scatter"]:
-        figure_num+=1
+        figure_num += 1
         plt.figure(figure_num)
         plt.title(f"{metric.capitalize()} between {station1} and {station2}")
-        plt.annotate(f'Total number of datapoints: {len(year_raw)}', (0.53, 0.9), xycoords='axes fraction', fontsize=10)
+        plt.annotate(f'Total number of datapoints: {len(year_raw)}', (
+            0.53, 0.9), xycoords='axes fraction', fontsize=10)
 
         if plotSettings["scatterRaw"]:
-            plt.plot(year_raw, distance_raw, "bo", markersize=3, label="Raw data")
+            plt.plot(year_raw, distance_raw, "bo",
+                     markersize=3, label="Raw data")
 
         if plotSettings["scatterTrimmed"]:
-            plt.plot(year_trimmed, distance_trimmed, "ko", markersize=3, label="Trimmed data")
+            plt.plot(year_trimmed, distance_trimmed, "ko",
+                     markersize=3, label="Trimmed data")
 
         if plotSettings["scatterTrendline"]:
-            plt.axline([year_trimmed[0],trendline[0]*year_trimmed[0]+trendline[1]], slope=trendline[0], color="red", label="Trend line")
+            plt.axline([year_trimmed[0], trendline[0]*year_trimmed[0]+trendline[1]],
+                       slope=trendline[0], color="red", label="Trend line")
 
         plt.legend(loc="lower left")
         plt.xlabel('Year')
-        plt.ylabel(f'{metric.capitalize()} [mm]') # Check with John that this is correct! 
-
+        # Check with John that this is correct!
+        plt.ylabel(f'{metric.capitalize()} [mm]')
 
     if plotSettings["residual"]:
-        figure_num+=1
+        figure_num += 1
         plt.figure(figure_num)
         plt.title(f"Residual of {metric} between {station1} and {station2}")
-        plt.annotate(f'Total number of datapoints: {len(year_raw)}', (0.53, 0.9), xycoords='axes fraction', fontsize=10)
+        plt.annotate(f'Total number of datapoints: {len(year_raw)}', (
+            0.53, 0.9), xycoords='axes fraction', fontsize=10)
         plt.axhline(y=0, color="red", linestyle="-")
 
         if plotSettings["residualRaw"]:
@@ -90,26 +97,30 @@ def plot_lines(metric,plotSettings):
                 correct_distance = trendline[0]*year_raw[i] + trendline[1]
                 residual = distance_raw[i] - correct_distance
                 residuals_raw.append(residual)
-            plt.plot(year_raw, residuals_raw, "bo", markersize = 3, label="Raw data")
-        
+            plt.plot(year_raw, residuals_raw, "bo",
+                     markersize=3, label="Raw data")
+
         if plotSettings["residualTrimmed"]:
-            plt.plot(year_trimmed, residuals_trimmed, "ko", markersize = 3, label="Trimmed data")
+            plt.plot(year_trimmed, residuals_trimmed, "ko",
+                     markersize=3, label="Trimmed data")
 
         plt.legend(loc="lower left")
         plt.xlabel('Year')
-        plt.ylabel(f'{metric.capitalize()} [mm]') # Check with John that this is correct!
+        # Check with John that this is correct!
+        plt.ylabel(f'{metric.capitalize()} [mm]')
 
     plt.show()
 
+
 if __name__ == '__main__':
     plotSettings = {
-    "scatter": True,
-    "scatterRaw": True,
-    "scatterTrimmed": True,
-    "scatterTrendline": True,
-    "residual": True,
-    "residualRaw": True,
-    "residualTrimmed": True,
-    "residualLine": True
+        "scatter": True,
+        "scatterRaw": True,
+        "scatterTrimmed": True,
+        "scatterTrendline": True,
+        "residual": True,
+        "residualRaw": True,
+        "residualTrimmed": True,
+        "residualLine": True
     }
-    plot_lines('length',plotSettings)
+    plot_lines('length', plotSettings)
