@@ -19,33 +19,15 @@ def find_matching_station_data(station1, station2):
 
     # Read in CSV file as Pandas dataframes
     lines_as_df = pd.read_csv(
-        'data/2023a_bas_apriori.csv', delim_whitespace=True)
+        'data/2023a_bas_apriori.csv', delim_whitespace=True, low_memory=False)
+    
+    lines_of_interest1 = lines_as_df.loc[
+        lines_as_df['locations'] == f"{station1}/{station2}"]
+    lines_of_interest2 = lines_as_df.loc[
+        lines_as_df['locations'] == f"{station2}/{station1}"]
+    lines_of_interest = pd.concat([lines_of_interest1,lines_of_interest2])
 
-    # Read in CSV file as plain text
-    lines = open('data/2023a_bas_apriori.csv', 'r')
-    lines = lines.readlines()
-    rows_of_interest = []
-
-    # Finds all rows where both stations are present
-    for i in range(len(lines_as_df)):
-        locations = lines_as_df.loc[i].locations
-        split_locations = locations.split('/')
-        if station1 in split_locations and station2 in split_locations:
-            rows_of_interest.append(lines[i+1])
-
-    # Adds header to new CSV file
-    f = open('data/matching_rows.csv', 'w')
-    f.write('BAS date epoch year locations length length_sigma transverse transverse_sigma horizontal horizontal_sigma \n')
-    f.close()
-
-    f = open('data/matching_rows.csv', 'a')
-
-    # Writes matching rows to new CSV file
-    for row in rows_of_interest:
-        f.write(row)
-
-    f.close()
-
+    lines_of_interest.to_csv('data/matching_rows.csv', ' ', index=False)
 
 if __name__ == '__main__':
-    find_matching_station_data('KOKEE___', 'WETTZELL')
+    find_matching_station_data('WETTZELL', 'KOKEE___')

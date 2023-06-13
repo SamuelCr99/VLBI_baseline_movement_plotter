@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import math
 
+figure_num = 0
 
 def plot_lines(metric, plotSettings):
     """
@@ -22,10 +23,12 @@ def plot_lines(metric, plotSettings):
     No return values!
     """
 
+    global figure_num
+
     # Read in the data
     distance = []
     year = []
-    data = pd.read_csv('data/matching_rows.csv', delim_whitespace=True)
+    data = pd.read_csv('data/matching_rows.csv', delim_whitespace=True, low_memory=False)
 
     for i in range(len(data)):
         distance.append(getattr(data.loc[i], metric))
@@ -72,8 +75,6 @@ def plot_lines(metric, plotSettings):
         distance = distance_trimmed
 
     # Generate the plots
-    figure_num = 0
-
     if plotSettings["scatter"]:
         figure_num += 1
         plt.figure(figure_num)
@@ -104,7 +105,6 @@ def plot_lines(metric, plotSettings):
         plt.title(f"Residual of {metric} between {station1} and {station2}")
         plt.annotate(f'Total number of datapoints: {len(year_raw)}', (
             0.53, 0.9), xycoords='axes fraction', fontsize=10)
-        plt.axhline(y=0, color="red", linestyle="-")
 
         if plotSettings["residualRaw"]:
             residuals_raw = []
@@ -118,13 +118,14 @@ def plot_lines(metric, plotSettings):
         if plotSettings["residualTrimmed"]:
             plt.plot(year_trimmed, residuals_trimmed, "ko",
                      markersize=3, label="Trimmed data")
-
+            
+        plt.axhline(y=0, color="red", linestyle="-")
         plt.legend(loc="lower left")
         plt.xlabel('Year')
         # Check with John that this is correct!
         plt.ylabel(f'{metric.capitalize()} [mm]')
 
-    plt.show()
+    plt.show(block=False)
 
 
 if __name__ == '__main__':

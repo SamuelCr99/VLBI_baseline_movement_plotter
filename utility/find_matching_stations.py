@@ -18,7 +18,7 @@ def find_matching_stations(station_to_match):
 
     # Read in CSV file as Pandas data frame
     lines_as_df = pd.read_csv(
-        'data/2023a_bas_apriori.csv', delim_whitespace=True)
+        'data/2023a_bas_apriori.csv', delim_whitespace=True, low_memory=False)
 
     # Read in CSV file as plain text
     lines = open('data/2023a_bas_apriori.csv', 'r')
