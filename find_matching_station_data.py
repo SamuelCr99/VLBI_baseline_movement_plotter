@@ -2,10 +2,10 @@ import pandas as pd
 
 def find_matching_station_data(station1, station2):
     # Read in CSV file as Pandas dataframes
-    lines_as_df = pd.read_csv('2023a_bas_apriori.csv', delim_whitespace=True)
+    lines_as_df = pd.read_csv('data/2023a_bas_apriori.csv', delim_whitespace=True)
 
     # Read in CSV file as plain text
-    lines = open('2023a_bas_apriori.csv', 'r')
+    lines = open('data/2023a_bas_apriori.csv', 'r')
     lines = lines.readlines()
     rows_of_interest = []
 
@@ -17,11 +17,11 @@ def find_matching_station_data(station1, station2):
             rows_of_interest.append(lines[i+1])
 
     # Adds header to new CSV file
-    f = open('matching_rows.csv', 'w')
+    f = open('data/matching_rows.csv', 'w')
     f.write('BAS date epoch year locations length length_sigma transverse transverse_sigma horizontal horizontal_sigma \n')
     f.close()
 
-    f = open('matching_rows.csv', 'a')
+    f = open('data/matching_rows.csv', 'a')
 
     # Writes matching rows to new CSV file
     for row in rows_of_interest:

@@ -2,10 +2,10 @@ import pandas as pd
 
 def find_station_names():
     # Read in CSV file as Pandas dataframes
-    lines_as_df = pd.read_csv('2023a_bas_apriori.csv', delim_whitespace=True)
+    lines_as_df = pd.read_csv('data/2023a_bas_apriori.csv', delim_whitespace=True)
 
     # Read in CSV file as plain text
-    lines = open('2023a_bas_apriori.csv', 'r')
+    lines = open('data/2023a_bas_apriori.csv', 'r')
     lines = lines.readlines()
     stations = []
 
@@ -18,7 +18,7 @@ def find_station_names():
         if split_locations[1] not in stations:
             stations.append(split_locations[1])
     stations.sort()
-    f = open('stations.txt', 'w')
+    f = open('data/stations.txt', 'w')
 
     # Writes matching rows to new CSV file
     for station in stations:

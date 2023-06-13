@@ -2,10 +2,10 @@ import pandas as pd
 
 def find_matching_stations(station_to_match):
     # Read in CSV file as Pandas dataframes
-    lines_as_df = pd.read_csv('2023a_bas_apriori.csv', delim_whitespace=True)
+    lines_as_df = pd.read_csv('data/2023a_bas_apriori.csv', delim_whitespace=True)
 
     # Read in CSV file as plain text
-    lines = open('2023a_bas_apriori.csv', 'r')
+    lines = open('data/2023a_bas_apriori.csv', 'r')
     lines = lines.readlines()
     stations = []
 
@@ -19,9 +19,13 @@ def find_matching_stations(station_to_match):
             stations.append(split_locations[0])
 
 
-    stations = list(set(stations))
     stations.sort()
-    return stations
+    stations_counted_dict = {i: stations.count(i) for i in stations}
+    stations_counted_array = []
+    for key in stations_counted_dict:
+        stations_counted_array.append(f'{key}[{stations_counted_dict[key]}]')
+    
+    return stations_counted_array
 
 if __name__ == '__main__':
     find_matching_stations('KOKEE___')
