@@ -3,6 +3,7 @@ from find_matching_stations import find_matching_stations
 
 def find_all_matching_stations():
     """
+    DEPRECATED
     Creates a JSON file with all stations and the stations they have shared 
     at least 1 session with. 
   

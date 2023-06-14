@@ -20,32 +20,23 @@ def find_matching_stations(station_to_match):
     lines_as_df = pd.read_csv(
         'data/2023a_bas_apriori.csv', delim_whitespace=True, low_memory=False)
 
-    # Read in CSV file as plain text
-    lines = open('data/2023a_bas_apriori.csv', 'r')
-    lines = lines.readlines()
-    stations = []
 
-    # Finds all rows where station is present and adds station to list for 
-    # returning
-    for i in range(len(lines_as_df)):
-        locations = lines_as_df.loc[i].locations
-        split_locations = locations.split('/')
-        if split_locations[0] == station_to_match:
-            stations.append(split_locations[1])
-        elif split_locations[1] == station_to_match:
-            stations.append(split_locations[0])
+    lines_of_interest = lines_as_df.loc[
+        lines_as_df['locations'].str.contains(station_to_match)]
 
-    # Sort so list is in alphabetic order
-    stations.sort()
+    station_names = pd.DataFrame()
+    station_names['locations'] = lines_of_interest['locations'].copy()
+    station_count = station_names.groupby(station_names.columns.tolist(),as_index=False).size()
 
-    # Creates a dictionary containing the number of times a station has shared 
-    # VLBI session with station_to_match
-    stations_counted_dict = {i: stations.count(i) for i in stations}
     stations_counted_array = []
-    for key in stations_counted_dict:
-        # Fill new list with name and count value
-        stations_counted_array.append(f'{key}[{stations_counted_dict[key]}]')
+    for _, row in station_count.iterrows(): 
+        name_of_station = row.loc['locations']
+        name_of_station = name_of_station.replace(station_to_match, '')
+        name_of_station = name_of_station.replace('/','')
+        count = row.loc['size']
+        stations_counted_array.append(f'{name_of_station}[{count}]')
 
+    stations_counted_array.sort()
     return stations_counted_array
 
 

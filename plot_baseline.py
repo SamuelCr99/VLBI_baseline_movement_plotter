@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import math
+import statistics
 
 figure_num = 0
 
@@ -71,8 +72,40 @@ def plot_lines(metric, plotSettings):
         if len(year) == len(year_trimmed):
             break
 
+
+
         year = year_trimmed
         distance = distance_trimmed
+
+    # Generate lists for rolling window std plots 
+    window_size = plotSettings['rolling_stdWindowSize']
+    # Plot containing all datapoints
+    std_dev_raw = []
+    for i in range(len(year_raw)):
+        window = [] 
+        for k in range(i, len(year_raw)): 
+            if year_raw[k] - year_raw[i] < window_size:
+                window.append(distance_raw[k]) 
+            else: 
+                break
+        if len(window) > 1:
+            std_dev_raw.append(statistics.stdev(window))
+        else: 
+            std_dev_raw.append(0)
+
+    # Plot for trimmed datapoints
+    std_dev_trimmed = []
+    for i in range(len(year_trimmed)):
+        window = [] 
+        for k in range(i, len(year_trimmed)): 
+            if year_trimmed[k] - year_trimmed[i] < window_size:
+                window.append(distance_trimmed[k]) 
+            else: 
+                break
+        if len(window) > 1:
+            std_dev_trimmed.append(statistics.stdev(window))
+        else: 
+            std_dev_trimmed.append(0)
 
     # Generate the plots
     if plotSettings["scatter"]:
@@ -124,6 +157,27 @@ def plot_lines(metric, plotSettings):
         plt.xlabel('Year')
         # Check with John that this is correct!
         plt.ylabel(f'{metric.capitalize()} [mm]')
+    
+    if plotSettings["rolling_std"]:
+        figure_num += 1
+        plt.figure(figure_num)
+        plt.title(f"Rolling std of {metric} between {station1} and {station2}")
+        plt.annotate(f'Total number of datapoints: {len(year_raw)}', (
+            0.53, 0.9), xycoords='axes fraction', fontsize=10)
+
+        if plotSettings["rolling_stdRaw"]:
+            plt.plot(year_raw, std_dev_raw, "bo",
+                     markersize=3, label="Raw data")
+
+        if plotSettings["rolling_stdTrimmed"]:
+            plt.plot(year_trimmed, std_dev_trimmed, "ko",
+                     markersize=3, label="Trimmed data")
+            
+        plt.axhline(y=0, color="red", linestyle="-")
+        plt.legend(loc="lower left")
+        plt.xlabel('Year')
+        # Check with John that this is correct!
+        plt.ylabel(f'{metric.capitalize()} [mm]')
 
     plt.show(block=False)
 
@@ -137,6 +191,10 @@ if __name__ == '__main__':
         "residual": True,
         "residualRaw": True,
         "residualTrimmed": True,
-        "residualLine": True
+        "rolling_std": True,
+        "rolling_stdRaw": True,
+        "rolling_stdTrimmed": True,
+        "rolling_stdWindowSize": 1
     }
     plot_lines('length', plotSettings)
+    plt.show()

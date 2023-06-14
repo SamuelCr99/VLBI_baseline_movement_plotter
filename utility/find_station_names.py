@@ -18,27 +18,18 @@ def find_station_names():
     lines_as_df = pd.read_csv(
         'data/2023a_bas_apriori.csv', delim_whitespace=True, low_memory=False)
 
-    # Read in CSV file as plain text
-    lines = open('data/2023a_bas_apriori.csv', 'r')
-    lines = lines.readlines()
-    stations = []
+    # Split the stations into two columns
+    station_names = lines_as_df['locations'].str.split("/", expand=True)
 
-    # Looks at all stations if station is not already found add it to 
-    # stations list
-    for i in range(len(lines_as_df)):
-        locations = lines_as_df.loc[i].locations
-        split_locations = locations.split('/')
-        if split_locations[0] not in stations:
-            stations.append(split_locations[0])
-        if split_locations[1] not in stations:
-            stations.append(split_locations[1])
-    stations.sort()
+    # Combine to a sorted list of unique stations
+    station_names_list = list(set(station_names[0].unique().tolist() + station_names[1].unique().tolist()))
+    station_names_list.sort()
+
     f = open('data/stations.txt', 'w')
 
     # Write all station files to new file
-    for station in stations:
+    for station in station_names_list:
         f.write(f'{station}\n')
-
     f.close()
 
 
