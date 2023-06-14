@@ -109,7 +109,7 @@ def run_gui():
             [sg.HorizontalSeparator(pad=20)],
             [sg.Column(settings_col), sg.VerticalSeparator(pad=20), sg.Push(), sg.Column(buttons_col, vertical_alignment='bottom')]]
 
-    window = sg.Window('VLBI Baseline Plotter', layout, margins=[20, 20])
+    window = sg.Window('VLBI Baseline Plotter', layout, margins=[20, 20], resizable=True)
 
     # Define what the events (button presses and selections) do
     scatterDisabled = False
