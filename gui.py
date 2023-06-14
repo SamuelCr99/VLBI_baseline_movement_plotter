@@ -65,49 +65,46 @@ def run_gui():
     sg.theme("DarkBlue")
     sg.SetOptions(font=("Andalde Mono", 12))
 
-    station1_col = [[sg.Text("First station:")],
-                    [sg.Listbox(key='first_station', values=stations,size=(LISTBOX_WIDTH,10), enable_events=True)]]
+    station1_col = [[sg.Text("First station:", justification="center")],
+                    [sg.Listbox(key='first_station', values=stations,size=(LISTBOX_WIDTH,20), enable_events=True)]]
 
-    station2_col = [[sg.Text("Second station:")],
-                    [sg.Listbox(key='second_station', values=[], size=(LISTBOX_WIDTH,10))]]
-
-    scatter_col = [[sg.Checkbox('Scatter:  ', default=True, key='scatter', enable_events=True)],
-                [sg.VPush()]]
+    station2_col = [[sg.Text("Second station:", justification="center")],
+                    [sg.Listbox(key='second_station', values=[], size=(LISTBOX_WIDTH,20))]]
+    
+    station_selection_tab = sg.Tab("Station selection", [[sg.Column(station1_col) ,sg.Column(station2_col)]], expand_x=True)
 
     scatter_settings_col = [[sg.Checkbox('Raw data', default=False, key='scatterRaw', expand_x=True)],
-                            [sg.Checkbox('Trimmed data', default=True,
-                                        key='scatterTrimmed', expand_x=True)],
+                            [sg.Checkbox('Trimmed data', default=True, key='scatterTrimmed', expand_x=True)],
                             [sg.Checkbox('Trend line', default=True, key='scatterTrendline', expand_x=True)]]
-    
-    residual_col = [[sg.Checkbox('Residual:', default=True, key='residual', enable_events=True)],
-                    [sg.VPush()]]
 
     residual_settings_col = [[sg.Checkbox('Raw data', default=False, key='residualRaw', expand_x=True)],
-                            [sg.Checkbox('Trimmed data', default=True, key='residualTrimmed', expand_x=True)]]
-
-    rolling_std_col = [[sg.Checkbox('Rolling window std [months]:', default=True, key='rolling_std', enable_events=True)],
-                       [sg.VPush()]]
+                             [sg.Checkbox('Trimmed data', default=True, key='residualTrimmed', expand_x=True)]]
 
     rolling_std_settings_col = [[sg.Checkbox('Raw data', default=False, key='rolling_stdRaw', expand_x=True)],
                                 [sg.Checkbox('Trimmed data', default=True, key='rolling_stdTrimmed', expand_x=True)],
                                 [sg.Slider(range=(0,60), resolution=1, orientation="h", key="rolling_stdWindowSize")]]
 
-    settings_col = [[sg.Text("Plot alternatives")],
-                    [sg.Column(scatter_col), sg.Column(scatter_settings_col)],
-                    [sg.HorizontalSeparator(pad=20, color="gray")],
-                    [sg.Column(residual_col), sg.Column(residual_settings_col)],
-                    [sg.HorizontalSeparator(pad=20, color="gray")],
-                    [sg.Column(rolling_std_col), sg.Column(rolling_std_settings_col)]]
+    settings_col = [[sg.Checkbox('Scatter', default=True, key='scatter', enable_events=True)],
+                    [sg.Column(scatter_settings_col, pad=[[40,0],[0,0]], expand_x=True)],
+                    #[sg.HorizontalSeparator(pad=20, color="gray")],
+                    [sg.Checkbox('Residual', default=True, key='residual', enable_events=True)],
+                    [sg.Column(residual_settings_col, pad=[[40,0],[0,0]], expand_x=True)],
+                    #[sg.HorizontalSeparator(pad=20, color="gray")],
+                    [sg.Checkbox('Rolling window std [months]', default=True, key='rolling_std', enable_events=True)],
+                    [sg.Column(rolling_std_settings_col, pad=[[40,0],[0,0]], expand_x=True)],
+                    #[sg.HorizontalSeparator(pad=20, color="gray")],
+                    [sg.Text("Choice of metric")],
+                    [sg.Radio("Length", "metric", default=True, key="length", pad=[[40,0],[0,0]]),
+                     sg.Radio("Transverse", "metric", key="transverse"),
+                     sg.Radio("Horizontal", "metric", key="horizontal")]]
+    
+    settings_tab = sg.Tab("Plot settings", [[sg.Column(settings_col, scrollable=False, vertical_scroll_only=True, expand_x=True, expand_y=True, pad=20)]])
 
-    buttons_col = [[sg.Text("Choice of metric")],
-                [sg.Radio("Length", "metric", default=True, key="length"), sg.Radio(
-                    "Transverse", "metric", key="transverse"), sg.Radio("Horizontal", "metric", key="horizontal")],
-                [sg.VPush()],
-                [sg.Push(), sg.Button('Plot'), sg.Button('Cancel')]]
+    buttons_col = [[sg.VPush()],
+                   [sg.Push(), sg.Button('Plot'), sg.Button('Cancel')]]
 
-    layout = [[sg.Column(station1_col), sg.Push() ,sg.Column(station2_col)],
-            [sg.HorizontalSeparator(pad=20)],
-            [sg.Column(settings_col), sg.VerticalSeparator(pad=20), sg.Push(), sg.Column(buttons_col, vertical_alignment='bottom')]]
+    layout = [[sg.TabGroup([[station_selection_tab, settings_tab]])],
+              [buttons_col]]
 
     window = sg.Window('VLBI Baseline Plotter', layout, margins=[20, 20], resizable=True)
 
