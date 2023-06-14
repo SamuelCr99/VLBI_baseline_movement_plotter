@@ -11,7 +11,8 @@ def plot_lines(metric):
     year = []
     station1 = ""
     station2 = ""
-    data = pd.read_csv('data/matching_rows.csv', delim_whitespace=True, low_memory=False)
+    data = pd.read_csv('data/matching_rows.csv',
+                       delim_whitespace=True, low_memory=False)
     window_size = 1
     std_dev_array = []
 
@@ -19,17 +20,16 @@ def plot_lines(metric):
         distance.append(getattr(data.loc[i], metric))
         year.append(data.loc[i].year)
 
-
     for i in range(len(data)):
-        window = [] 
-        for k in range(i, len(data)): 
+        window = []
+        for k in range(i, len(data)):
             if year[k] - year[i] < window_size:
-                window.append(distance[k]) 
-            else: 
+                window.append(distance[k])
+            else:
                 break
         if len(window) > 1:
             std_dev_array.append(statistics.stdev(window))
-        else: 
+        else:
             std_dev_array.append(0)
     plt.plot(year, std_dev_array)
 

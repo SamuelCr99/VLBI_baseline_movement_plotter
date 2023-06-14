@@ -22,7 +22,8 @@ def find_station_names():
     station_names = lines_as_df['locations'].str.split("/", expand=True)
 
     # Combine to a sorted list of unique stations
-    station_names_list = list(set(station_names[0].unique().tolist() + station_names[1].unique().tolist()))
+    station_names_list = list(
+        set(station_names[0].unique().tolist() + station_names[1].unique().tolist()))
     station_names_list.sort()
 
     f = open('data/stations.txt', 'w')

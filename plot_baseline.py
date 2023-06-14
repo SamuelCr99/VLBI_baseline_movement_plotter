@@ -6,6 +6,7 @@ import statistics
 
 figure_num = 0
 
+
 def plot_lines(metric, plotSettings):
     """
     Plots the given metric in the matching_rows.csv file using the plotSettings.
@@ -29,7 +30,8 @@ def plot_lines(metric, plotSettings):
     # Read in the data
     distance = []
     year = []
-    data = pd.read_csv('data/matching_rows.csv', delim_whitespace=True, low_memory=False)
+    data = pd.read_csv('data/matching_rows.csv',
+                       delim_whitespace=True, low_memory=False)
 
     for i in range(len(data)):
         distance.append(getattr(data.loc[i], metric))
@@ -72,39 +74,37 @@ def plot_lines(metric, plotSettings):
         if len(year) == len(year_trimmed):
             break
 
-
-
         year = year_trimmed
         distance = distance_trimmed
 
-    # Generate lists for rolling window std plots 
+    # Generate lists for rolling window std plots
     window_size = plotSettings['rolling_stdWindowSize']
     # Plot containing all datapoints
     std_dev_raw = []
     for i in range(len(year_raw)):
-        window = [] 
-        for k in range(i, len(year_raw)): 
+        window = []
+        for k in range(i, len(year_raw)):
             if year_raw[k] - year_raw[i] < window_size:
-                window.append(distance_raw[k]) 
-            else: 
+                window.append(distance_raw[k])
+            else:
                 break
         if len(window) > 1:
             std_dev_raw.append(statistics.stdev(window))
-        else: 
+        else:
             std_dev_raw.append(0)
 
     # Plot for trimmed datapoints
     std_dev_trimmed = []
     for i in range(len(year_trimmed)):
-        window = [] 
-        for k in range(i, len(year_trimmed)): 
+        window = []
+        for k in range(i, len(year_trimmed)):
             if year_trimmed[k] - year_trimmed[i] < window_size:
-                window.append(distance_trimmed[k]) 
-            else: 
+                window.append(distance_trimmed[k])
+            else:
                 break
         if len(window) > 1:
             std_dev_trimmed.append(statistics.stdev(window))
-        else: 
+        else:
             std_dev_trimmed.append(0)
 
     # Generate the plots
@@ -151,13 +151,13 @@ def plot_lines(metric, plotSettings):
         if plotSettings["residualTrimmed"]:
             plt.plot(year_trimmed, residuals_trimmed, "ko",
                      markersize=3, label="Trimmed data")
-            
+
         plt.axhline(y=0, color="red", linestyle="-")
         plt.legend(loc="lower left")
         plt.xlabel('Year')
         # Check with John that this is correct!
         plt.ylabel(f'{metric.capitalize()} [mm]')
-    
+
     if plotSettings["rolling_std"]:
         figure_num += 1
         plt.figure(figure_num)
@@ -172,7 +172,7 @@ def plot_lines(metric, plotSettings):
         if plotSettings["rolling_stdTrimmed"]:
             plt.plot(year_trimmed, std_dev_trimmed, "ko",
                      markersize=3, label="Trimmed data")
-            
+
         plt.axhline(y=0, color="red", linestyle="-")
         plt.legend(loc="lower left")
         plt.xlabel('Year')

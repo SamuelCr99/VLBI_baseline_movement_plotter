@@ -8,6 +8,7 @@ from find_matching_stations import find_matching_stations
 
 LISTBOX_WIDTH = 40
 
+
 def create_plots(values):
     """
     Collects values which shall be plotted. 
@@ -35,12 +36,15 @@ def create_plots(values):
         "rolling_std": values["rolling_std"],
         "rolling_stdRaw": values["rolling_stdRaw"],
         "rolling_stdTrimmed": values["rolling_stdTrimmed"],
-        "rolling_stdWindowSize": values["rolling_stdWindowSize"]/12 # Plot code takes years as input, but GUI accepts amount of months
+        # Plot code takes years as input, but GUI accepts amount of months
+        "rolling_stdWindowSize": values["rolling_stdWindowSize"]/12
     }
-    metric = "length" if values["length"] else ("transverse" if values["transverse"] else "horizontal")
+    metric = "length" if values["length"] else (
+        "transverse" if values["transverse"] else "horizontal")
 
     find_matching_station_data(station1, station2)
     plot_lines(metric, plotSettings)
+
 
 def run_gui():
     """
@@ -55,7 +59,7 @@ def run_gui():
     Returns:
     No return values!
     """
-    
+
     with open('data/matching_stations.json', 'r') as json_file:
         matching_stations = json.load(json_file)
 
@@ -66,39 +70,48 @@ def run_gui():
     sg.SetOptions(font=("Andalde Mono", 12))
 
     station1_col = [[sg.Text("First station:", justification="center")],
-                    [sg.Listbox(key='first_station', values=stations,size=(LISTBOX_WIDTH,20), enable_events=True)]]
+                    [sg.Listbox(key='first_station', values=stations, size=(LISTBOX_WIDTH, 20), enable_events=True)]]
 
     station2_col = [[sg.Text("Second station:", justification="center")],
-                    [sg.Listbox(key='second_station', values=[], size=(LISTBOX_WIDTH,20))]]
-    
-    station_selection_tab = sg.Tab("Station selection", [[sg.Column(station1_col) ,sg.Column(station2_col)]], expand_x=True)
+                    [sg.Listbox(key='second_station', values=[], size=(LISTBOX_WIDTH, 20))]]
+
+    station_selection_tab = sg.Tab("Station selection", [[sg.Column(
+        station1_col), sg.Column(station2_col)]], expand_x=True)
 
     scatter_settings_col = [[sg.Checkbox('Raw data', default=False, key='scatterRaw', expand_x=True)],
-                            [sg.Checkbox('Trimmed data', default=True, key='scatterTrimmed', expand_x=True)],
+                            [sg.Checkbox('Trimmed data', default=True,
+                                         key='scatterTrimmed', expand_x=True)],
                             [sg.Checkbox('Trend line', default=True, key='scatterTrendline', expand_x=True)]]
 
     residual_settings_col = [[sg.Checkbox('Raw data', default=False, key='residualRaw', expand_x=True)],
                              [sg.Checkbox('Trimmed data', default=True, key='residualTrimmed', expand_x=True)]]
 
     rolling_std_settings_col = [[sg.Checkbox('Raw data', default=False, key='rolling_stdRaw', expand_x=True)],
-                                [sg.Checkbox('Trimmed data', default=True, key='rolling_stdTrimmed', expand_x=True)],
-                                [sg.Slider(range=(0,60), resolution=1, orientation="h", key="rolling_stdWindowSize")]]
+                                [sg.Checkbox(
+                                    'Trimmed data', default=True, key='rolling_stdTrimmed', expand_x=True)],
+                                [sg.Slider(range=(0, 60), resolution=1, orientation="h", default_value=12, key="rolling_stdWindowSize")]]
 
     settings_col = [[sg.Checkbox('Scatter', default=True, key='scatter', enable_events=True)],
-                    [sg.Column(scatter_settings_col, pad=[[40,0],[0,0]], expand_x=True)],
-                    #[sg.HorizontalSeparator(pad=20, color="gray")],
-                    [sg.Checkbox('Residual', default=True, key='residual', enable_events=True)],
-                    [sg.Column(residual_settings_col, pad=[[40,0],[0,0]], expand_x=True)],
-                    #[sg.HorizontalSeparator(pad=20, color="gray")],
-                    [sg.Checkbox('Rolling window std [months]', default=True, key='rolling_std', enable_events=True)],
-                    [sg.Column(rolling_std_settings_col, pad=[[40,0],[0,0]], expand_x=True)],
-                    #[sg.HorizontalSeparator(pad=20, color="gray")],
+                    [sg.Column(scatter_settings_col, pad=[
+                               [40, 0], [0, 0]], expand_x=True)],
+                    # [sg.HorizontalSeparator(pad=20, color="gray")],
+                    [sg.Checkbox('Residual', default=True,
+                                 key='residual', enable_events=True)],
+                    [sg.Column(residual_settings_col, pad=[
+                               [40, 0], [0, 0]], expand_x=True)],
+                    # [sg.HorizontalSeparator(pad=20, color="gray")],
+                    [sg.Checkbox('Rolling window std [months]', default=True,
+                                 key='rolling_std', enable_events=True)],
+                    [sg.Column(rolling_std_settings_col, pad=[
+                               [40, 0], [0, 0]], expand_x=True)],
+                    # [sg.HorizontalSeparator(pad=20, color="gray")],
                     [sg.Text("Choice of metric")],
-                    [sg.Radio("Length", "metric", default=True, key="length", pad=[[40,0],[0,0]]),
+                    [sg.Radio("Length", "metric", default=True, key="length", pad=[[40, 0], [0, 0]]),
                      sg.Radio("Transverse", "metric", key="transverse"),
                      sg.Radio("Horizontal", "metric", key="horizontal")]]
-    
-    settings_tab = sg.Tab("Plot settings", [[sg.Column(settings_col, scrollable=False, vertical_scroll_only=True, expand_x=True, expand_y=True, pad=20)]])
+
+    settings_tab = sg.Tab("Plot settings", [[sg.Column(
+        settings_col, scrollable=False, vertical_scroll_only=True, expand_x=True, expand_y=True, pad=20)]])
 
     buttons_col = [[sg.VPush()],
                    [sg.Push(), sg.Button('Plot'), sg.Button('Cancel')]]
@@ -106,7 +119,8 @@ def run_gui():
     layout = [[sg.TabGroup([[station_selection_tab, settings_tab]])],
               [buttons_col]]
 
-    window = sg.Window('VLBI Baseline Plotter', layout, margins=[20, 20], resizable=True)
+    window = sg.Window('VLBI Baseline Plotter', layout,
+                       margins=[20, 20], resizable=True)
 
     # Define what the events (button presses and selections) do
     scatterDisabled = False
@@ -115,11 +129,11 @@ def run_gui():
 
     while True:
         event, values = window.read()
-        
+
         # Close window if user clicks cancel or closes window
         if event == sg.WIN_CLOSED or event == 'Cancel':
             break
-        
+
         # Generate plots if user clicks plot
         if event == "Plot":
             create_plots(values)
@@ -143,7 +157,7 @@ def run_gui():
                 window["scatterTrimmed"].update(disabled=True)
                 window["scatterTrendline"].update(disabled=True)
                 scatterDisabled = True
-        
+
         # Disable/Enable the residual plot settings
         if event == "residual":
             if residualDisabled:
@@ -154,7 +168,7 @@ def run_gui():
                 window["residualRaw"].update(disabled=True)
                 window["residualTrimmed"].update(disabled=True)
                 residualDisabled = True
-        
+
         # Disable/Enable the rolling window std plot settings
         if event == "rolling_std":
             if rolling_stdDisabled:
@@ -167,6 +181,7 @@ def run_gui():
                 window["rolling_stdTrimmed"].update(disabled=True)
                 window["rolling_stdWindowSize"].update(disabled=True)
                 rolling_stdDisabled = True
+
 
 if __name__ == '__main__':
     run_gui()
