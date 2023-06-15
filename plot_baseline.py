@@ -9,6 +9,12 @@ from find_matching_station_data import find_matching_station_data
 
 figure_num = 0
 
+def is_float(string):
+    try:
+        float(string)
+        return True
+    except ValueError:
+        return False
 
 def plot_lines(metric, plotSettings, viewSettings):
     """
@@ -92,7 +98,8 @@ def plot_lines(metric, plotSettings, viewSettings):
     for i in range(len(year_raw)):
         window = []
         for k in range(0,len(year_raw)):
-            if abs(year_raw[i]-year_raw[k]) <= window_size/2: window.append(sigma_raw[k])
+            if abs(year_raw[i]-year_raw[k]) <= window_size/2 and is_float(sigma_raw[k]):
+                window.append(float(sigma_raw[k]))
         std_dev_raw.append(statistics.mean(window))
 
     # Plot for trimmed datapoints
@@ -100,7 +107,7 @@ def plot_lines(metric, plotSettings, viewSettings):
     for i in range(len(year_trimmed)):
         window = []
         for k in range(0,len(year_trimmed)):
-            if abs(year_trimmed[i]-year_trimmed[k]) <= window_size/2: window.append(sigma_trimmed[k])
+            if abs(year_trimmed[i]-year_trimmed[k]) <= window_size/2: window.append(sigma_trimmed[k] and is_float(sigma_raw[k]))
         std_dev_trimmed.append(statistics.mean(window))
 
     # Generate the plots
