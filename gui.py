@@ -3,10 +3,13 @@ from find_matching_station_data import find_matching_station_data
 from plot_baseline import plot_lines
 import json
 import sys
+import pandas as pd
+import math
 sys.path.insert(0, './utility')
 from find_matching_stations import find_matching_stations
 
 LISTBOX_WIDTH = 40
+STATION_RADIUS = 2.0
 
 def create_plots(values):
     """
@@ -70,17 +73,23 @@ def run_gui():
 
     stations = list(matching_stations.keys())
 
+    station_locations = pd.read_csv("data/station_locations.csv")
+
     # Define the layout of the GUI
     sg.theme("DarkBlue")
     sg.SetOptions(font=("Andalde Mono", 12))
 
     station1_col = [[sg.Text("First station:", justification="center")],
                     [sg.Listbox(key='first_station', values=stations,
-                                size=(LISTBOX_WIDTH, 20), enable_events=True)]]
+                                size=(LISTBOX_WIDTH, 20), enable_events=True)],
+                    [sg.Text("", key="station1_text"), sg.Push(),
+                     sg.Button("Map", key="map_station1")]]
 
     station2_col = [[sg.Text("Second station:", justification="center")],
                     [sg.Listbox(key='second_station', values=[],
-                                size=(LISTBOX_WIDTH, 20))]]
+                                size=(LISTBOX_WIDTH, 20), enable_events=True)],
+                    [sg.Text("", key="station2_text"), sg.Push(),
+                     sg.Button("Map", key="map_station2")]]
     
     metric_settings_col = [[sg.Radio("Length", "metric", default=True,
                                      key="length"),
@@ -155,84 +164,149 @@ def run_gui():
     layout = [[sg.TabGroup([[data_selection_tab, settings_tab, view_tab]])],
               [buttons_col]]
 
-    window = sg.Window('VLBI Baseline Plotter', layout,
-                       margins=[20, 20], resizable=True)
+    main_window = sg.Window('VLBI Baseline Plotter', layout,
+                       margins=[20, 20], resizable=True, finalize=True)
 
     # Define what the events (button presses and selections) do
     scatterDisabled = False
     residualDisabled = False
     rolling_stdDisabled = False
     saveDisabled = True
+    available_second_stations = []
 
     while True:
-        event, values = window.read()
-
-        # Close window if user clicks cancel or closes window
-        if event == sg.WIN_CLOSED or event == 'Cancel':
+        window, event, values = sg.read_all_windows()
+        # Close main_window if user clicks cancel or closes main_window
+        if event == sg.WIN_CLOSED and window == main_window or event == 'Cancel':
             break
+
+        if event == sg.WIN_CLOSED and window == map1_window: 
+            map1_window.close()
+
+        if event == sg.WIN_CLOSED and window == map2_window: 
+            map2_window.close()
 
         # Generate plots if user clicks plot
         if event == "Plot":
             create_plots(values)
 
         # Update the list of stations in the second list when user selects
-        # the first station
+        # the first station, and update the text for chosen station 1
         if event == "first_station":
             available_second_stations = find_matching_stations(
                 values["first_station"][0])
-            window['second_station'].update(available_second_stations)
+            main_window['second_station'].update(available_second_stations)
+            main_window["station1_text"].update(values["first_station"][0])
+
+        # Update the text for chosen station 2
+        if event == "second_station":
+            main_window["station2_text"].update(values["second_station"][0].split('[')[0])
 
         # Disable/Enable the scatter plot settings
         if event == "scatter":
             if scatterDisabled:
-                window["scatterRaw"].update(disabled=False)
-                window["scatterTrimmed"].update(disabled=False)
-                window["scatterTrendline"].update(disabled=False)
+                main_window["scatterRaw"].update(disabled=False)
+                main_window["scatterTrimmed"].update(disabled=False)
+                main_window["scatterTrendline"].update(disabled=False)
                 scatterDisabled = False
             else:
-                window["scatterRaw"].update(disabled=True)
-                window["scatterTrimmed"].update(disabled=True)
-                window["scatterTrendline"].update(disabled=True)
+                main_window["scatterRaw"].update(disabled=True)
+                main_window["scatterTrimmed"].update(disabled=True)
+                main_window["scatterTrendline"].update(disabled=True)
                 scatterDisabled = True
 
         # Disable/Enable the residual plot settings
         if event == "residual":
             if residualDisabled:
-                window["residualRaw"].update(disabled=False)
-                window["residualTrimmed"].update(disabled=False)
+                main_window["residualRaw"].update(disabled=False)
+                main_window["residualTrimmed"].update(disabled=False)
                 residualDisabled = False
             else:
-                window["residualRaw"].update(disabled=True)
-                window["residualTrimmed"].update(disabled=True)
+                main_window["residualRaw"].update(disabled=True)
+                main_window["residualTrimmed"].update(disabled=True)
                 residualDisabled = True
 
-        # Disable/Enable the rolling window std plot settings
+        # Disable/Enable the rolling maindow std plot settings
         if event == "rolling_std":
             if rolling_stdDisabled:
-                window["rolling_stdRaw"].update(disabled=False)
-                window["rolling_stdTrimmed"].update(disabled=False)
-                window["rolling_stdWindowSize"].update(disabled=False)
+                main_window["rolling_stdRaw"].update(disabled=False)
+                main_window["rolling_stdTrimmed"].update(disabled=False)
+                main_window["rolling_stdWindowSize"].update(disabled=False)
                 rolling_stdDisabled = False
             else:
-                window["rolling_stdRaw"].update(disabled=True)
-                window["rolling_stdTrimmed"].update(disabled=True)
-                window["rolling_stdWindowSize"].update(disabled=True)
+                main_window["rolling_stdRaw"].update(disabled=True)
+                main_window["rolling_stdTrimmed"].update(disabled=True)
+                main_window["rolling_stdWindowSize"].update(disabled=True)
                 rolling_stdDisabled = True
 
         # Disable/Enable the save settings
         if event == "save":
             if saveDisabled:
-                window["png"].update(disabled=False)
-                window["jpg"].update(disabled=False)
-                window["pdf"].update(disabled=False)
-                window["svg"].update(disabled=False)
+                main_window["png"].update(disabled=False)
+                main_window["jpg"].update(disabled=False)
+                main_window["pdf"].update(disabled=False)
+                main_window["svg"].update(disabled=False)
                 saveDisabled = False
             else:
-                window["png"].update(disabled=True)
-                window["jpg"].update(disabled=True)
-                window["pdf"].update(disabled=True)
-                window["svg"].update(disabled=True)
+                main_window["png"].update(disabled=True)
+                main_window["jpg"].update(disabled=True)
+                main_window["pdf"].update(disabled=True)
+                main_window["svg"].update(disabled=True)
                 saveDisabled = True
+
+        if event == "map_station1":
+            map1 = sg.Graph([1000,500], [-180,-90], [180,90],key="map1",
+                            enable_events=True)
+            map1_window = sg.Window('Select first station', [[map1]], finalize=True)
+            map1.draw_image(filename="world_map_smaller.png", location=[-180, 90])
+
+            for _, station in station_locations.iterrows():
+                map1.draw_circle([station.x,station.y], STATION_RADIUS, fill_color="black")
+                map1.draw_circle([station.x,station.y], STATION_RADIUS*0.7, fill_color="white")
+
+        if event == "map1":
+            x = values["map1"][0]
+            y = values["map1"][1]
+            distance_to_stations = station_locations.copy()
+            distance_to_stations["distance"] = distance_to_stations.apply(lambda s: math.sqrt(math.pow(s["x"]-x,2)+math.pow(s["y"]-y,2)), axis=1)
+            distance_to_stations.sort_values("distance", inplace=True)
+            distance_to_stations.reset_index(inplace=True)
+            if distance_to_stations.loc[0].distance <= STATION_RADIUS:
+                selected_station = distance_to_stations.loc[0].station
+                main_window["first_station"].set_value([selected_station])
+                available_second_stations = find_matching_stations(selected_station)
+                main_window['second_station'].update(available_second_stations)
+                main_window["station1_text"].update(selected_station)
+                map1_window.close()
+
+        if event == "map_station2":
+            map2 = sg.Graph([1000,500], [-180,-90], [180,90],key="map2",
+                            enable_events=True)
+            map2_window = sg.Window('Select second station', [[map2]], finalize=True)
+            map2.draw_image(filename="world_map_smaller.png", location=[-180, 90])
+
+            for _, station in station_locations.iterrows():
+                concat_stations = '\t'.join(available_second_stations) # Stack overflow magic 
+                res = station.station in concat_stations
+                if res:
+                    map2.draw_circle([station.x,station.y], STATION_RADIUS, fill_color="black")
+                    map2.draw_circle([station.x,station.y], STATION_RADIUS*0.7, fill_color="white")
+
+        if event == "map2":
+            x = values["map2"][0]
+            y = values["map2"][1]
+            distance_to_stations = station_locations.copy()
+            distance_to_stations = distance_to_stations[distance_to_stations.apply(lambda s: s.station in '\t'.join(available_second_stations), axis=1)]
+            distance_to_stations["distance"] = distance_to_stations.apply(lambda s: math.sqrt(math.pow(s["x"]-x,2)+math.pow(s["y"]-y,2)), axis=1)
+            distance_to_stations.sort_values("distance", inplace=True)
+            distance_to_stations.reset_index(inplace=True)
+            if distance_to_stations.loc[0].distance <= STATION_RADIUS:
+                for row in available_second_stations:
+                    if distance_to_stations.loc[0].station in row:
+                        selected_station = row
+                        main_window["second_station"].set_value(selected_station)
+                        main_window["station2_text"].update(selected_station.split('[')[0])
+                        map2_window.close()
 
 
 if __name__ == '__main__':
