@@ -8,7 +8,6 @@ from find_matching_stations import find_matching_stations
 
 LISTBOX_WIDTH = 40
 
-
 def create_plots(values):
     """
     Collects values which shall be plotted. 
@@ -89,26 +88,26 @@ def run_gui():
     rolling_std_settings_col = [[sg.Checkbox('Raw data', default=False, key='rolling_stdRaw', expand_x=True)],
                                 [sg.Checkbox(
                                     'Trimmed data', default=True, key='rolling_stdTrimmed', expand_x=True)],
-                                [sg.Slider(range=(0, 60), resolution=1, orientation="h", default_value=12, key="rolling_stdWindowSize")]]
+                                [sg.Text("Window size (months)", pad=[[0,0],[22,0]]), sg.Slider(range=(0, 60), resolution=1, orientation="h", default_value=12, key="rolling_stdWindowSize")]]
+    
+    metric_settings_col = [[sg.Radio("Length", "metric", default=True, key="length", pad=[[40, 0], [0, 0]]),
+                            sg.Radio("Transverse", "metric", key="transverse"),
+                            sg.Radio("Horizontal", "metric", key="horizontal")]]
 
     settings_col = [[sg.Checkbox('Scatter', default=True, key='scatter', enable_events=True)],
                     [sg.Column(scatter_settings_col, pad=[
-                               [40, 0], [0, 0]], expand_x=True)],
-                    # [sg.HorizontalSeparator(pad=20, color="gray")],
+                               [40, 0], [0, 20]], expand_x=True)],
                     [sg.Checkbox('Residual', default=True,
                                  key='residual', enable_events=True)],
                     [sg.Column(residual_settings_col, pad=[
-                               [40, 0], [0, 0]], expand_x=True)],
-                    # [sg.HorizontalSeparator(pad=20, color="gray")],
-                    [sg.Checkbox('Rolling window std [months]', default=True,
+                               [40, 0], [0, 20]], expand_x=True)],
+                    [sg.Checkbox('Rolling window std', default=True,
                                  key='rolling_std', enable_events=True)],
                     [sg.Column(rolling_std_settings_col, pad=[
-                               [40, 0], [0, 0]], expand_x=True)],
-                    # [sg.HorizontalSeparator(pad=20, color="gray")],
+                               [40, 0], [0, 20]], expand_x=True)],
                     [sg.Text("Choice of metric")],
-                    [sg.Radio("Length", "metric", default=True, key="length", pad=[[40, 0], [0, 0]]),
-                     sg.Radio("Transverse", "metric", key="transverse"),
-                     sg.Radio("Horizontal", "metric", key="horizontal")]]
+                    [sg.Column(metric_settings_col, pad=[
+                               [40, 0], [0, 0]], expand_x=True)]]
 
     settings_tab = sg.Tab("Plot settings", [[sg.Column(
         settings_col, scrollable=False, vertical_scroll_only=True, expand_x=True, expand_y=True, pad=20)]])

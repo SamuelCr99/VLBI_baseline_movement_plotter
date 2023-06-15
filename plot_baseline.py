@@ -112,8 +112,8 @@ def plot_lines(metric, plotSettings):
         figure_num += 1
         plt.figure(figure_num)
         plt.title(f"{metric.capitalize()} between {station1} and {station2}")
-        plt.annotate(f'Total number of datapoints: {len(year_raw)}', (
-            0.53, 0.9), xycoords='axes fraction', fontsize=10)
+        plt.figtext(
+            0.95, 0.5, f'Number of raw datapoints: {len(year_raw)}\n Number of trimmed datapoints: {len(year_trimmed)}', va="center", ha='center', rotation=90)
 
         if plotSettings["scatterRaw"]:
             plt.plot(year_raw, distance_raw, "bo",
@@ -136,8 +136,8 @@ def plot_lines(metric, plotSettings):
         figure_num += 1
         plt.figure(figure_num)
         plt.title(f"Residual of {metric} between {station1} and {station2}")
-        plt.annotate(f'Total number of datapoints: {len(year_raw)}', (
-            0.53, 0.9), xycoords='axes fraction', fontsize=10)
+        plt.figtext(
+            0.95, 0.5, f'Number of raw datapoints: {len(year_raw)}\n Number of trimmed datapoints: {len(year_trimmed)}', va="center", ha='center', rotation=90)
 
         if plotSettings["residualRaw"]:
             residuals_raw = []
@@ -162,15 +162,15 @@ def plot_lines(metric, plotSettings):
         figure_num += 1
         plt.figure(figure_num)
         plt.title(f"Rolling std of {metric} between {station1} and {station2}")
-        plt.annotate(f'Total number of datapoints: {len(year_raw)}', (
-            0.53, 0.9), xycoords='axes fraction', fontsize=10)
+        plt.figtext(
+            0.95, 0.5, f'Number of raw datapoints: {len(year_raw)}\n Number of trimmed datapoints: {len(year_trimmed)}', va="center", ha='center', rotation=90)
 
         if plotSettings["rolling_stdRaw"]:
-            plt.plot(year_raw, std_dev_raw, "bo",
+            plt.plot(year_raw, std_dev_raw, "b-",
                      markersize=3, label="Raw data")
 
         if plotSettings["rolling_stdTrimmed"]:
-            plt.plot(year_trimmed, std_dev_trimmed, "ko",
+            plt.plot(year_trimmed, std_dev_trimmed, "k-",
                      markersize=3, label="Trimmed data")
 
         plt.axhline(y=0, color="red", linestyle="-")
