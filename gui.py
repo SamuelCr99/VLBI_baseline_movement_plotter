@@ -7,9 +7,11 @@ import pandas as pd
 import math
 sys.path.insert(0, './utility')
 from find_matching_stations import find_matching_stations
+from matplotlibmap import draw_map
 
 LISTBOX_WIDTH = 40
 STATION_RADIUS = 2.0
+
 
 def create_plots(values):
     """
@@ -180,12 +182,6 @@ def run_gui():
         if event == sg.WIN_CLOSED and window == main_window or event == 'Cancel':
             break
 
-        if event == sg.WIN_CLOSED and window == map1_window: 
-            map1_window.close()
-
-        if event == sg.WIN_CLOSED and window == map2_window: 
-            map2_window.close()
-
         # Generate plots if user clicks plot
         if event == "Plot":
             create_plots(values)
@@ -255,58 +251,28 @@ def run_gui():
                 saveDisabled = True
 
         if event == "map_station1":
-            map1 = sg.Graph([1000,500], [-180,-90], [180,90],key="map1",
-                            enable_events=True)
-            map1_window = sg.Window('Select first station', [[map1]], finalize=True)
-            map1.draw_image(filename="world_map_smaller.png", location=[-180, 90])
-
-            for _, station in station_locations.iterrows():
-                map1.draw_circle([station.x,station.y], STATION_RADIUS, fill_color="black")
-                map1.draw_circle([station.x,station.y], STATION_RADIUS*0.7, fill_color="white")
-
-        if event == "map1":
-            x = values["map1"][0]
-            y = values["map1"][1]
-            distance_to_stations = station_locations.copy()
-            distance_to_stations["distance"] = distance_to_stations.apply(lambda s: math.sqrt(math.pow(s["x"]-x,2)+math.pow(s["y"]-y,2)), axis=1)
-            distance_to_stations.sort_values("distance", inplace=True)
-            distance_to_stations.reset_index(inplace=True)
-            if distance_to_stations.loc[0].distance <= STATION_RADIUS:
-                selected_station = distance_to_stations.loc[0].station
+            selected_station = draw_map(station_locations, "Select first station")
+            if selected_station:
                 main_window["first_station"].set_value([selected_station])
                 available_second_stations = find_matching_stations(selected_station)
                 main_window['second_station'].update(available_second_stations)
                 main_window["station1_text"].update(selected_station)
-                map1_window.close()
 
         if event == "map_station2":
-            map2 = sg.Graph([1000,500], [-180,-90], [180,90],key="map2",
-                            enable_events=True)
-            map2_window = sg.Window('Select second station', [[map2]], finalize=True)
-            map2.draw_image(filename="world_map_smaller.png", location=[-180, 90])
-
-            for _, station in station_locations.iterrows():
-                concat_stations = '\t'.join(available_second_stations) # Stack overflow magic 
-                res = station.station in concat_stations
-                if res:
-                    map2.draw_circle([station.x,station.y], STATION_RADIUS, fill_color="black")
-                    map2.draw_circle([station.x,station.y], STATION_RADIUS*0.7, fill_color="white")
-
-        if event == "map2":
-            x = values["map2"][0]
-            y = values["map2"][1]
-            distance_to_stations = station_locations.copy()
-            distance_to_stations = distance_to_stations[distance_to_stations.apply(lambda s: s.station in '\t'.join(available_second_stations), axis=1)]
-            distance_to_stations["distance"] = distance_to_stations.apply(lambda s: math.sqrt(math.pow(s["x"]-x,2)+math.pow(s["y"]-y,2)), axis=1)
-            distance_to_stations.sort_values("distance", inplace=True)
-            distance_to_stations.reset_index(inplace=True)
-            if distance_to_stations.loc[0].distance <= STATION_RADIUS:
-                for row in available_second_stations:
-                    if distance_to_stations.loc[0].station in row:
-                        selected_station = row
-                        main_window["second_station"].set_value(selected_station)
-                        main_window["station2_text"].update(selected_station.split('[')[0])
-                        map2_window.close()
+            available_second_stations_2 = []
+            for station in available_second_stations: 
+                available_second_stations_2.append(station.split('[')[0])
+            available_second_stations_df = station_locations.loc[station_locations['station'].isin(available_second_stations_2)]
+            
+            selected_station = draw_map(available_second_stations_df, "Select second station")
+            if selected_station:
+                selected_station_text = ""
+                for station in available_second_stations:
+                    if selected_station in station:
+                        selected_station_text = station
+                        break
+                main_window["second_station"].set_value([selected_station_text])
+                main_window["station2_text"].update(selected_station_text)
 
 
 if __name__ == '__main__':
