@@ -3,18 +3,28 @@ import pandas as pd
 import numpy as np
 import math
 import statistics
-import sys
 import argparse
 from find_matching_station_data import find_matching_station_data
 
 figure_num = 0
 
+
 def is_float(string):
+    """
+    Checks if given string value can be cast to floating point
+
+    Parameters: 
+    string (string): Value to be checked
+
+    Returns: 
+    bool: Boolean to tell if value can be cast or not
+    """
     try:
         float(string)
         return True
     except ValueError:
         return False
+
 
 def plot_lines(metric, plotSettings, viewSettings):
     """
@@ -45,8 +55,8 @@ def plot_lines(metric, plotSettings, viewSettings):
 
     for i in range(len(data)):
         distance.append(getattr(data.loc[i], metric))
-        year.append(getattr(data.loc[i],"year"))
-        sigma.append(getattr(data.loc[i],f"{metric}_sigma"))
+        year.append(getattr(data.loc[i], "year"))
+        sigma.append(getattr(data.loc[i], f"{metric}_sigma"))
     stations = getattr(data.loc[0], "locations")
     station1 = stations[:8]
     station2 = stations[9:]
@@ -97,7 +107,7 @@ def plot_lines(metric, plotSettings, viewSettings):
     std_dev_raw = []
     for i in range(len(year_raw)):
         window = []
-        for k in range(0,len(year_raw)):
+        for k in range(0, len(year_raw)):
             if abs(year_raw[i]-year_raw[k]) <= window_size/2 and is_float(sigma_raw[k]):
                 window.append(sigma_raw[k])
         std_dev_raw.append(statistics.mean(window))
@@ -106,8 +116,8 @@ def plot_lines(metric, plotSettings, viewSettings):
     std_dev_trimmed = []
     for i in range(len(year_trimmed)):
         window = []
-        for k in range(0,len(year_trimmed)):
-            if abs(year_trimmed[i]-year_trimmed[k]) <= window_size/2 and is_float(sigma_trimmed[k]): 
+        for k in range(0, len(year_trimmed)):
+            if abs(year_trimmed[i]-year_trimmed[k]) <= window_size/2 and is_float(sigma_trimmed[k]):
                 window.append(sigma_trimmed[k])
         std_dev_trimmed.append(statistics.mean(window))
 
@@ -135,8 +145,9 @@ def plot_lines(metric, plotSettings, viewSettings):
         plt.xlabel('Year')
         # Check with John that this is correct!
         plt.ylabel(f'{metric.capitalize()} [mm]')
-        if(viewSettings["save"]):
-            plt.savefig(f"plots/Scatter_{station1}-{station2}_{metric}.{viewSettings['saveFormat']}", format=viewSettings["saveFormat"])
+        if (viewSettings["save"]):
+            plt.savefig(
+                f"plots/Scatter_{station1}-{station2}_{metric}.{viewSettings['saveFormat']}", format=viewSettings["saveFormat"])
 
     if plotSettings["residual"]:
         figure_num += 1
@@ -163,8 +174,9 @@ def plot_lines(metric, plotSettings, viewSettings):
         plt.xlabel('Year')
         # Check with John that this is correct!
         plt.ylabel(f'{metric.capitalize()} [mm]')
-        if(viewSettings["save"]):
-            plt.savefig(f"plots/Residual_{station1}-{station2}_{metric}.{viewSettings['saveFormat']}", format=viewSettings["saveFormat"])
+        if (viewSettings["save"]):
+            plt.savefig(
+                f"plots/Residual_{station1}-{station2}_{metric}.{viewSettings['saveFormat']}", format=viewSettings["saveFormat"])
 
     if plotSettings["rolling_std"]:
         figure_num += 1
@@ -186,16 +198,18 @@ def plot_lines(metric, plotSettings, viewSettings):
         plt.xlabel('Year')
         # Check with John that this is correct!
         plt.ylabel(f'{metric.capitalize()} [mm]')
-        if(viewSettings["save"]):
-            plt.savefig(f"plots/Rolling_std_{station1}-{station2}_{metric}.{viewSettings['saveFormat']}", format=viewSettings["saveFormat"])
+        if (viewSettings["save"]):
+            plt.savefig(
+                f"plots/Rolling_std_{station1}-{station2}_{metric}.{viewSettings['saveFormat']}", format=viewSettings["saveFormat"])
     if viewSettings["display"]:
         plt.show(block=False)
 
 
 if __name__ == '__main__':
+    # Create parser to allow program to be run in script mode
     parser = argparse.ArgumentParser(
-                        prog='Plot baseline',
-                        description='Plots baselines between 2 given stations')
+        prog='Plot baseline',
+        description='Plots baselines between 2 given stations')
 
     parser.add_argument('station1', type=str)
     parser.add_argument('station2', type=str)
