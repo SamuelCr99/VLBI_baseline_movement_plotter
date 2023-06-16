@@ -104,7 +104,18 @@ def run_gui():
 
         # Generate plots if user clicks plot
         if event == "Plot":
-            create_plots(values)
+            if not (values["first_station"] and values["second_station"]):
+                sg.popup("Please select two stations!",title="Warning")
+            elif not (values["scatter"] or values["residual"] or values["rolling_std"]):
+                sg.popup("Please select plot type!",title="Warning")
+            elif values["scatter"] and not (values["scatterRaw"] or values["scatterTrimmed"] or values["scatterTrendline"]):
+                sg.popup("Please select data to plot in scatter plot!",title="Warning")
+            elif values["residual"] and not (values["residualRaw"] or values["residualTrimmed"]):
+                sg.popup("Please select data to plot in residual plot!",title="Warning")
+            elif values["rolling_std"] and not (values["rolling_stdRaw"] or values["rolling_stdTrimmed"]):
+                sg.popup("Please select data to plot in std plot!",title="Warning")
+            else: 
+                create_plots(values)
 
         # Update the list of stations in the second list when user selects
         # the first station, and update the text for chosen station 1
@@ -113,6 +124,7 @@ def run_gui():
                 values["first_station"][0])
             main_window['second_station'].update(available_second_stations)
             main_window["station1_text"].update(values["first_station"][0])
+            main_window["station2_text"].update("")
 
         # Update the text for chosen station 2
         if event == "second_station":
@@ -176,6 +188,7 @@ def run_gui():
                     selected_station)
                 main_window['second_station'].update(available_second_stations)
                 main_window["station1_text"].update(selected_station)
+                main_window["station2_text"].update("")
 
         # Show the map for the second station
         if event == "map_station2":

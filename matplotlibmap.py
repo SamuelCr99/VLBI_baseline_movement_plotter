@@ -113,7 +113,9 @@ def on_click(event):
         # on the circle) and exits map.
         if distance_to_stations.loc[0].distance <= STATION_CLICK_RADIUS:
             selected_station = distance_to_stations.loc[0]['station']
-            plt.close('all')
+            print(plt.get_figlabels())
+            plt.close('Select first station')
+            plt.close('Select second station')
 
 
 def draw_map(station_coordinates, title):

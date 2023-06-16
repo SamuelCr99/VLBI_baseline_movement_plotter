@@ -49,7 +49,7 @@ def create_layout(stations):
                                     key='rolling_stdTrimmed', expand_x=True)],
                                 [sg.Text("Window size (months)",
                                          pad=[[0, 0], [22, 0]]),
-                                    sg.Slider(range=(0, 60), resolution=1,
+                                    sg.Slider(range=(1, 60), resolution=1,
                                               orientation="h",
                                               default_value=12,
                                               key="rolling_stdWindowSize")]]
