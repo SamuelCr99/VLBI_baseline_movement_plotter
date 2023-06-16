@@ -12,11 +12,14 @@ STATION_CLICK_RADIUS = 1
 global_station_location = []
 selected_station = ""
 mouse_on_station = ""
-text = None
+text = ""
 
 def map_to_fig(coordinates):
     map_x = coordinates[0]
     map_y = coordinates[1]
+
+    if map_x == None or map_y == None: 
+        return [0,0] 
 
     fig_x = 954+map_x*1908/360
     fig_y = 477-map_y*954/180
@@ -27,6 +30,10 @@ def map_to_fig(coordinates):
 def fig_to_map(coordinates):
     fig_x = coordinates[0]
     fig_y = coordinates[1]
+
+    if fig_x == None or fig_y == None: 
+        return [0,0] 
+
 
     map_x = (fig_x-954)*360/1908
     map_y = (477-fig_y)*180/954
@@ -43,7 +50,11 @@ def on_click(event):
     distance_to_stations.reset_index(inplace=True)
     if distance_to_stations.loc[0].distance <= STATION_CLICK_RADIUS:
         selected_station = distance_to_stations.loc[0]['station']
-        plt.close()
+        plt.draw_all()
+        # fig.canvas.mpl_disconnect('button_press_event')
+        # fig.canvas.mpl_disconnect('motion_notify_event')
+        plt.close('all')
+        #plt.clf()
         
 def on_move(event):
     global mouse_on_station
@@ -60,16 +71,16 @@ def on_move(event):
         mouse_on_station = ""
 
     if (mouse_on_station != old_mouse_on_station):
-        try:
+        if text != "":
             with plt.ion():
-                # plt.pause(0.05)
                 text.remove()
-        except:
-            pass
-        if mouse_on_station != "": 
+                text = ""
+                print("I removed text!")
+        if mouse_on_station: 
             with plt.ion():
-                # plt.pause(0.05)
+                plt.pause(0.01)
                 text = plt.text(event.xdata + 10, event.ydata + 10, mouse_on_station, size=12)
+                print(f"I added text: {mouse_on_station}")
 
 def draw_map(station_coordinates, title):
     global selected_station
@@ -82,7 +93,7 @@ def draw_map(station_coordinates, title):
     mouse_on_station = ""
 
     global text
-    text = None
+    text = ""
 
     fig, ax = plt.subplots(figsize=(10,5), num=title)
     
@@ -99,10 +110,13 @@ def draw_map(station_coordinates, title):
     plt.axis('off')
     plt.tight_layout(pad=0)
     plt.show()
+    plt.draw_all()
+
     print(f'Selected station: {selected_station}')
 
-    # fig.canvas.mpl_disconnect('button_press_event')
-    # fig.canvas.mpl_disconnect('motion_notify_event')
-    # plt.ioff()
+    fig.canvas.mpl_disconnect('button_press_event')
+    fig.canvas.mpl_disconnect('motion_notify_event')
     plt.close('all')
+    print("I closed all plots!")
+    # plt.clf()
     return selected_station
