@@ -26,7 +26,7 @@ def is_float(string):
         return False
 
 
-def plot_lines(metric, plotSettings, viewSettings):
+def plot_lines(data, metric, plotSettings, viewSettings):
     """
     Plots the given metric in the matching_rows.csv file using the plotSettings.
 
@@ -50,14 +50,12 @@ def plot_lines(metric, plotSettings, viewSettings):
     distance = []
     year = []
     sigma = []
-    data = pd.read_csv('data/matching_rows.csv',
-                       delim_whitespace=True, low_memory=False)
 
     for i in range(len(data)):
-        distance.append(getattr(data.loc[i], metric))
-        year.append(getattr(data.loc[i], "year"))
-        sigma.append(getattr(data.loc[i], f"{metric}_sigma"))
-    stations = getattr(data.loc[0], "locations")
+        distance.append(getattr(data.iloc[i], metric))
+        year.append(getattr(data.iloc[i], "year"))
+        sigma.append(getattr(data.iloc[i], f"{metric}_sigma"))
+    stations = getattr(data.iloc[0], "locations")
     station1 = stations[:8]
     station2 = stations[9:]
 
@@ -109,7 +107,7 @@ def plot_lines(metric, plotSettings, viewSettings):
         window = []
         for k in range(0, len(year_raw)):
             if abs(year_raw[i]-year_raw[k]) <= window_size/2 and is_float(sigma_raw[k]):
-                window.append(sigma_raw[k])
+                window.append(float(sigma_raw[k]))
         std_dev_raw.append(statistics.mean(window))
 
     # Plot for trimmed datapoints
@@ -118,7 +116,7 @@ def plot_lines(metric, plotSettings, viewSettings):
         window = []
         for k in range(0, len(year_trimmed)):
             if abs(year_trimmed[i]-year_trimmed[k]) <= window_size/2 and is_float(sigma_trimmed[k]):
-                window.append(sigma_trimmed[k])
+                window.append(float(sigma_trimmed[k]))
         std_dev_trimmed.append(statistics.mean(window))
 
     # Generate the plots
@@ -247,7 +245,7 @@ if __name__ == '__main__':
         "saveFormat": args.file_type
     }
 
-    find_matching_station_data(args.station1, args.station2)
-    plot_lines('length', plotSettings, viewSettings)
+    data = find_matching_station_data(args.station1, args.station2)
+    plot_lines(data, 'length', plotSettings, viewSettings)
     if args.show_plots:
         plt.show()

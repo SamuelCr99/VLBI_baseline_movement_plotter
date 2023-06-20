@@ -50,8 +50,8 @@ def create_plots(values):
     metric = "length" if values["length"] else (
         "transverse" if values["transverse"] else "horizontal")
 
-    find_matching_station_data(station1, station2)
-    plot_lines(metric, plotSettings, viewSettings)
+    matching_rows = find_matching_station_data(station1, station2)
+    plot_lines(matching_rows, metric, plotSettings, viewSettings)
 
 
 def disable_window_elements(elements_to_update, state, window):
@@ -74,10 +74,9 @@ def run_gui():
     No return values!
     """
 
-    with open('data/matching_stations.json', 'r') as json_file:
-        matching_stations = json.load(json_file)
-
-    stations = list(matching_stations.keys())
+    with open('data/stations.txt', 'r') as station_file:
+        file_contents = station_file.read()
+        stations = file_contents.split('\n')
 
     station_locations = pd.read_csv("data/station_locations.csv")
 

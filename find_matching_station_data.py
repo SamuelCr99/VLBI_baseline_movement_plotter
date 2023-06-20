@@ -14,7 +14,7 @@ def find_matching_station_data(station1, station2):
     station2 (string): The other station
 
     Returns:
-    No return values!
+    lines_of_interest (DataFrame): All rows of data that contains both stations
     """
 
     # Read in CSV file as Pandas dataframes
@@ -23,8 +23,8 @@ def find_matching_station_data(station1, station2):
 
     lines_of_interest = lines_as_df.loc[
         (lines_as_df['locations'] == f"{station1}/{station2}") | (lines_as_df['locations'] == f"{station2}/{station1}")]
-
-    lines_of_interest.to_csv('data/matching_rows.csv', ' ', index=False)
+    lines_of_interest.reset_index(inplace = True)
+    return lines_of_interest
 
 
 if __name__ == '__main__':
