@@ -99,25 +99,36 @@ def plot_lines(data, metric, plotSettings, viewSettings):
         sigma = sigma_trimmed
         distance = distance_trimmed
 
+    residuals_raw = []
+    for i in range(len(year_raw)):
+        correct_distance = trendline[0]*year_raw[i] + trendline[1]
+        residual = distance_raw[i] - correct_distance
+        residuals_raw.append(residual)
+
     # Generate lists for rolling window std plots
     window_size = float(plotSettings['rolling_stdWindowSize'])
+
     # Plot containing all datapoints
     std_dev_raw = []
     for i in range(len(year_raw)):
-        window = []
+        window_res = []
+        window_sig = []
         for k in range(0, len(year_raw)):
-            if abs(year_raw[i]-year_raw[k]) <= window_size/2 and is_float(sigma_raw[k]):
-                window.append(float(sigma_raw[k]))
-        std_dev_raw.append(statistics.mean(window))
+            if abs(year_raw[i]-year_raw[k]) <= window_size/2 and is_float(residuals_raw[k] and is_float(sigma_raw[k])):
+                window_res.append(pow(float(residuals_raw[k])/float(sigma_raw[k]),2))
+                window_sig.append(pow(1/float(sigma_raw[k]),2))
+        std_dev_raw.append(math.sqrt(sum(window_res)/sum(window_sig)))
 
     # Plot for trimmed datapoints
     std_dev_trimmed = []
     for i in range(len(year_trimmed)):
-        window = []
+        window_res = []
+        window_sig = []
         for k in range(0, len(year_trimmed)):
-            if abs(year_trimmed[i]-year_trimmed[k]) <= window_size/2 and is_float(sigma_trimmed[k]):
-                window.append(float(sigma_trimmed[k]))
-        std_dev_trimmed.append(statistics.mean(window))
+            if abs(year_trimmed[i]-year_trimmed[k]) <= window_size/2 and is_float(residuals_trimmed[k] and is_float(sigma_trimmed[k])):
+                window_res.append(pow(float(residuals_trimmed[k])/float(sigma_trimmed[k]),2))
+                window_sig.append(pow(1/float(sigma_trimmed[k]),2))
+        std_dev_trimmed.append(math.sqrt(sum(window_res)/sum(window_sig)))
 
     # Generate the plots
     if plotSettings["scatter"]:
@@ -126,6 +137,8 @@ def plot_lines(data, metric, plotSettings, viewSettings):
         plt.title(f"{metric.capitalize()} between {station1} and {station2}")
         plt.figtext(
             0.95, 0.5, f'Number of raw datapoints: {len(year_raw)}\n Number of trimmed datapoints: {len(year_trimmed)}', va="center", ha='center', rotation=90)
+        plt.figtext(
+            0.5, 0.8, f'Slope of line: {round(trendline[0],2)}', va="center", ha='center')
 
         if plotSettings["scatterRaw"]:
             plt.plot(year_raw, distance_raw, "bo",
@@ -155,11 +168,6 @@ def plot_lines(data, metric, plotSettings, viewSettings):
             0.95, 0.5, f'Number of raw datapoints: {len(year_raw)}\n Number of trimmed datapoints: {len(year_trimmed)}', va="center", ha='center', rotation=90)
 
         if plotSettings["residualRaw"]:
-            residuals_raw = []
-            for i in range(len(year_raw)):
-                correct_distance = trendline[0]*year_raw[i] + trendline[1]
-                residual = distance_raw[i] - correct_distance
-                residuals_raw.append(residual)
             plt.plot(year_raw, residuals_raw, "bo",
                      markersize=3, label="Raw data")
 
@@ -201,6 +209,8 @@ def plot_lines(data, metric, plotSettings, viewSettings):
                 f"plots/Rolling_std_{station1}-{station2}_{metric}.{viewSettings['saveFormat']}", format=viewSettings["saveFormat"])
     if viewSettings["display"]:
         plt.show(block=False)
+    else:
+        plt.close("all")
 
 
 if __name__ == '__main__':

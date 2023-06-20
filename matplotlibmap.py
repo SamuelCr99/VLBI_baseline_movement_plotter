@@ -177,4 +177,5 @@ def draw_map(station_coordinates, title):
 
     # Return the selected station
     print(f'Selected station: {selected_station}')
+    plt.ioff()
     return selected_station

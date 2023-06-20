@@ -27,16 +27,9 @@ def find_matching_stations(station_to_match):
     station_count = station_names.groupby(
         station_names.columns.tolist(), as_index=False).size()
 
-    stations_counted_array = []
-    for _, row in station_count.iterrows():
-        name_of_station = row.loc['locations']
-        name_of_station = name_of_station.replace(station_to_match, '')
-        name_of_station = name_of_station.replace('/', '')
-        count = row.loc['size']
-        stations_counted_array.append(f'{name_of_station}[{count}]')
+    station_count['locations'] = station_count['locations'].apply(lambda x: x.replace(station_to_match,'').replace('/', ''))
 
-    stations_counted_array.sort()
-    return stations_counted_array
+    return station_count
 
 
 if __name__ == '__main__':

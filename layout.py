@@ -3,6 +3,10 @@ import PySimpleGUI as sg
 LISTBOX_WIDTH = 40
 
 
+test_table = [["KOKEE___",35],
+              ["WETTZELL",100],
+              ["NYALES20",23]]
+
 def create_layout(stations):
     station1_col = [[sg.Text("First station:", justification="center")],
                     [sg.Listbox(key='first_station', values=stations,
@@ -12,8 +16,10 @@ def create_layout(stations):
 
     station2_col = [[sg.Text("Second station:", justification="center")],
                     [sg.Listbox(key='second_station', values=[],
-                                size=(LISTBOX_WIDTH, 20), enable_events=True)],
+                               size=(LISTBOX_WIDTH, 20), enable_events=True)],
                     [sg.Text("", key="station2_text"), sg.Push(),
+                        sg.Button("Sort by name", key="sort_name"),
+                        sg.Button("Sort by count", key="sort_count"),
                         sg.Button("Map", key="map_station2")]]
 
     metric_settings_col = [[sg.Radio("Length", "metric", default=True,

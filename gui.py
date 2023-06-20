@@ -93,6 +93,8 @@ def run_gui():
     rolling_stdDisabled = False
     saveDisabled = True
     available_second_stations = []
+    descending_name = False
+    descending_size = True
 
     # Event loop for the GUI
     while True:
@@ -121,7 +123,8 @@ def run_gui():
         if event == "first_station":
             available_second_stations = find_matching_stations(
                 values["first_station"][0])
-            main_window['second_station'].update(available_second_stations)
+            # main_window['second_station'].update(available_second_stations)
+            main_window['second_station'].update(available_second_stations.apply(lambda row: f"{row.locations}[{row['size']}]", axis=1).to_list())
             main_window["station1_text"].update(values["first_station"][0])
             main_window["station2_text"].update("")
 
@@ -185,7 +188,7 @@ def run_gui():
                 main_window["first_station"].set_value([selected_station])
                 available_second_stations = find_matching_stations(
                     selected_station)
-                main_window['second_station'].update(available_second_stations)
+                main_window['second_station'].update(available_second_stations.apply(lambda row: f"{row.locations}[{row['size']}]", axis=1).to_list())
                 main_window["station1_text"].update(selected_station)
                 main_window["station2_text"].update("")
 
@@ -193,11 +196,8 @@ def run_gui():
         if event == "map_station2":
             # Get the available stations as a DataFrame (without data point
             # count)
-            available_second_stations_2 = []
-            for station in available_second_stations:
-                available_second_stations_2.append(station.split('[')[0])
             available_second_stations_df = station_locations.loc[station_locations['station'].isin(
-                available_second_stations_2)]
+                available_second_stations['locations'])]
 
             # Draw map
             selected_station = draw_map(
@@ -206,16 +206,27 @@ def run_gui():
             # Update the selection list and text if a station was selected
             if selected_station:
                 # Get the data point count back with the station name
-                selected_station_text = ""
-                for station in available_second_stations:
-                    if selected_station in station:
-                        selected_station_text = station
-                        break
+                selected_station_text = f"{selected_station}[{available_second_stations.loc[available_second_stations['locations'] == selected_station]['size'].iloc[0]}]"
+                print(selected_station_text)
                 # Update list and text element
                 main_window["second_station"].set_value(
                     [selected_station_text])
                 main_window["station2_text"].update(selected_station_text)
 
+        # Sort the second station list by name (first A-Z, then Z-A)
+        if event == "sort_name":
+            available_second_stations.sort_values(by='locations', inplace=True, ascending= descending_name)
+            main_window['second_station'].update(available_second_stations.apply(lambda row: f"{row.locations}[{row['size']}]", axis=1).to_list())
+            descending_name = not descending_name
+            descending_size = True
+        
+        # Sort the second station list by count (first descending, then
+        # ascending)
+        if event == "sort_count":
+            available_second_stations.sort_values(by='size', inplace=True, ascending = not descending_size)
+            main_window['second_station'].update(available_second_stations.apply(lambda row: f"{row.locations}[{row['size']}]", axis=1).to_list())
+            descending_size = not descending_size
+            descending_name = True
 
 if __name__ == '__main__':
     run_gui()
