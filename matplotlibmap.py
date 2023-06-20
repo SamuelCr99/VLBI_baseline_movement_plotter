@@ -11,6 +11,7 @@ warnings.filterwarnings('ignore')
 STATION_DRAW_RADIUS = 60.0
 STATION_CLICK_RADIUS = 1
 global_station_location = None
+global_title = ""
 selected_station = ""
 mouse_on_station = ""
 text = None
@@ -113,9 +114,7 @@ def on_click(event):
         # on the circle) and exits map.
         if distance_to_stations.loc[0].distance <= STATION_CLICK_RADIUS:
             selected_station = distance_to_stations.loc[0]['station']
-            print(plt.get_figlabels())
-            plt.close('Select first station')
-            plt.close('Select second station')
+            plt.close(global_title)
 
 
 def draw_map(station_coordinates, title):
@@ -137,6 +136,7 @@ def draw_map(station_coordinates, title):
     global selected_station
     global mouse_on_station
     global global_station_location
+    global global_title
     global text
 
     # Set global variables to empty string to avoid issues when using map many
@@ -144,6 +144,7 @@ def draw_map(station_coordinates, title):
     selected_station = ""
     mouse_on_station = ""
     global_station_location = station_coordinates
+    global_title = title
 
     # Prepare the coordinates for the stations
     station_coordinates["fig_x"] = station_coordinates.apply(
