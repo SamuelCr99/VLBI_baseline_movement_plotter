@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
-import pandas as pd
 from matplotlib.backend_bases import MouseButton
 import math
 import warnings
@@ -156,7 +155,7 @@ def draw_map(station_coordinates, title):
     plt.ion()
     _, ax = plt.subplots(figsize=(10, 5), num=title)
     text = plt.text(0, 0, "", size=12, color="black", backgroundcolor="white")
-    img = np.asarray(Image.open('world_map.png'))
+    img = np.asarray(Image.open('resources/world_map.png'))
     plt.imshow(img)
 
     # Draw station locations on to screen

@@ -1,11 +1,6 @@
 import PySimpleGUI as sg
 
-LISTBOX_WIDTH = 40
-
-
-test_table = [["KOKEE___",35],
-              ["WETTZELL",100],
-              ["NYALES20",23]]
+LISTBOX_WIDTH = 45
 
 def create_layout(stations):
     station1_col = [[sg.Text("First station:", justification="center")],

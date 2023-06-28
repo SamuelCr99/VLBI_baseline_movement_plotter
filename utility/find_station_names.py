@@ -16,7 +16,7 @@ def find_station_names():
 
     # Read in CSV file as Pandas dataframes
     lines_as_df = pd.read_csv(
-        'data/2023a_bas_apriori.csv', delim_whitespace=True, low_memory=False)
+        'data/raw_data.csv', delim_whitespace=True, low_memory=False)
 
     # Split the stations into two columns
     station_names = lines_as_df['locations'].str.split("/", expand=True)

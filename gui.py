@@ -1,13 +1,10 @@
-from matplotlibmap import draw_map
-import PySimpleGUI as sg
-from find_matching_station_data import find_matching_station_data
-from plot_baseline import plot_lines
-import json
-import pandas as pd
+from utility.matplotlibmap import draw_map
+from utility.find_matching_station_data import find_matching_station_data
 from utility.find_matching_stations import find_matching_stations
-from layout import create_layout
-
-STATION_RADIUS = 2.0
+from utility.layout import create_layout
+from plot_baseline import plot_lines
+import PySimpleGUI as sg
+import pandas as pd
 
 
 def create_plots(values):
