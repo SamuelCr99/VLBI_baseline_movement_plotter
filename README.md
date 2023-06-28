@@ -2,7 +2,7 @@
 
 ## Description
 
-Plots the baseline and other related quantities between two VLBI stations. The program was developed at NVI Inc. by Filip Herbertsson and Samuel Collier Ryder during a summer internship.
+Plots the baseline and other related quantities between two VLBI stations. The program was developed at NVI Inc. by Filip Herbertsson and Samuel Collier Ryder during a summer internship in 2023.
 
 ![](resources/gui_image.png "Image of the GUI")
 
