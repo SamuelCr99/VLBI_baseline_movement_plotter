@@ -219,18 +219,18 @@ if __name__ == '__main__':
 
     parser.add_argument('station1', type=str)
     parser.add_argument('station2', type=str)
-    parser.add_argument('--no_scatter', action='store_true')
-    parser.add_argument('--no_residual', action='store_true')
-    parser.add_argument('--no_rolling_std', action='store_true')
-    parser.add_argument('--no_raw', action='store_true')
-    parser.add_argument('--no_trimmed', action='store_true')
-    parser.add_argument('--no_trendline', action='store_true')
+    parser.add_argument('--no_scatter', action='store_true', help="don't plot scatter plot")
+    parser.add_argument('--no_residual', action='store_true', help="don't plot residual plot")
+    parser.add_argument('--no_rolling_std', action='store_true', help="don't plot rolling std plot")
+    parser.add_argument('--no_raw', action='store_true', help="don't plot raw data")
+    parser.add_argument('--no_trimmed', action='store_true', help="don't plot trimmed data")
+    parser.add_argument('--no_trendline', action='store_true', help="don't plot trendline")
 
-    parser.add_argument('--save_plots', action='store_true')
-    parser.add_argument('--show_plots', action='store_true')
-    parser.add_argument('--file_type', type=str, default="png")
+    parser.add_argument('--save_plots', action='store_true', help="save plots to file")
+    parser.add_argument('--show_plots', action='store_true', help="show plots")
+    parser.add_argument('--file_type', type=str, default="png", help="file type to save plots as")
 
-    parser.add_argument('--window_size', type=float, default=1)
+    parser.add_argument('--window_size', type=float, default=12, help="window size for rolling std (months)")
     args = parser.parse_args()
 
     plotSettings = {
@@ -244,7 +244,7 @@ if __name__ == '__main__':
         "rolling_std": not args.no_rolling_std,
         "rolling_stdRaw": not args.no_raw,
         "rolling_stdTrimmed": not args.no_trimmed,
-        "rolling_stdWindowSize": args.window_size
+        "rolling_stdWindowSize": args.window_size/12
     }
 
     viewSettings = {

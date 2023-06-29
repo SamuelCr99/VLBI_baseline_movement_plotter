@@ -25,14 +25,5 @@ def find_station_names():
     station_names_list = list(
         set(station_names[0].unique().tolist() + station_names[1].unique().tolist()))
     station_names_list.sort()
+    return station_names_list
 
-    f = open('data/stations.txt', 'w')
-
-    # Write all station files to new file
-    for station in station_names_list:
-        f.write(f'{station}\n')
-    f.close()
-
-
-if __name__ == '__main__':
-    find_station_names()

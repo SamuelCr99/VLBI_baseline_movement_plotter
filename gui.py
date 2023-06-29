@@ -3,6 +3,8 @@ from utility.find_matching_station_data import find_matching_station_data
 from utility.find_matching_stations import find_matching_stations
 from utility.layout import create_layout
 from plot_baseline import plot_lines
+from utility.find_station_names import find_station_names
+from utility.match_station_location_data import match_station_location_data
 import PySimpleGUI as sg
 import pandas as pd
 
@@ -71,11 +73,8 @@ def run_gui():
     No return values!
     """
 
-    with open('data/stations.txt', 'r') as station_file:
-        file_contents = station_file.read()
-        stations = file_contents.split('\n')
-
-    station_locations = pd.read_csv("data/station_locations.csv")
+    stations = find_station_names()
+    station_locations = match_station_location_data(stations)
 
     # Define the layout of the GUI
     sg.theme("DarkBlue")
@@ -204,7 +203,6 @@ def run_gui():
             if selected_station:
                 # Get the data point count back with the station name
                 selected_station_text = f"{selected_station}[{available_second_stations.loc[available_second_stations['locations'] == selected_station]['size'].iloc[0]}]"
-                print(selected_station_text)
                 # Update list and text element
                 main_window["second_station"].set_value(
                     [selected_station_text])

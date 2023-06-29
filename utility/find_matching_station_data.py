@@ -3,7 +3,7 @@ import pandas as pd
 
 def find_matching_station_data(station1, station2):
     """
-    Writes a CSV file with all the data points containing both stations.
+    Returns all data points containing both stations.
 
     It searches the database for rows containing both stations and writes that
     data to matching_rows.csv. The code assumes that there are rows of data that
@@ -25,7 +25,3 @@ def find_matching_station_data(station1, station2):
         (lines_as_df['locations'] == f"{station1}/{station2}") | (lines_as_df['locations'] == f"{station2}/{station1}")]
     lines_of_interest.reset_index(inplace = True)
     return lines_of_interest
-
-
-if __name__ == '__main__':
-    find_matching_station_data('WETTZELL', 'KOKEE___')

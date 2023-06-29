@@ -18,7 +18,7 @@ $ pip install pandas matplotlib PySimpleGUI Pillow
 
 ## How to use
 
-The program can either be used with the provided GUI, or it can be run as a script.
+The program has three plots it can produce: A scatter plot of the data with a trend line, a plot of residuals from the trend line and a plot displaying the standard deviation from the trend line, averaged over some interval. The program can either be used with the provided GUI, or it can be run as a script.
 
 ### GUI mode
 
@@ -54,6 +54,11 @@ $ python3 plot_baseline.py KOKEE___ WETTZELL --show_plots --no_trendline
  $ python3 plot_baseline.py --help 
  ```
 
+### Change data
+
+If you want to change the data being plotted and add more sessions, you can do so by switching out the raw_data.csv file. If the new data contains more stations, be sure to include them and their position in the position.csv file.
+
  ## Known problems
 * If the map is used while plots are displayed the GUI will not update the selected station correctly. To force an update the map button must be pressed twice. 
 * When the map is present, the user is still able to press buttons in the main window.
+* The locations of some stations is not currently included in the position.csv file, and thus can not be selected from the map.
