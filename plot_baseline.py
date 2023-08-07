@@ -50,9 +50,9 @@ def plot_lines(data, metric, plotSettings, viewSettings):
     sigma = []
 
     for i in range(len(data)):
-        distance.append(getattr(data.iloc[i], metric))
-        year.append(getattr(data.iloc[i], "year"))
-        sigma.append(getattr(data.iloc[i], f"{metric}_sigma"))
+        distance.append(float(getattr(data.iloc[i], metric)))
+        year.append(float(getattr(data.iloc[i], "year")))
+        sigma.append(float(getattr(data.iloc[i], f"{metric}_sigma")))
     stations = getattr(data.iloc[0], "locations")
     station1 = stations[:8]
     station2 = stations[9:]
@@ -136,7 +136,7 @@ def plot_lines(data, metric, plotSettings, viewSettings):
         plt.figtext(
             0.95, 0.5, f'Number of raw datapoints: {len(year_raw)}\n Number of trimmed datapoints: {len(year_trimmed)}', va="center", ha='center', rotation=90)
         plt.figtext(
-            0.5, 0.8, f'Slope of line: {round(trendline[0],2)}', va="center", ha='center')
+            0.5, 0.8, f'Slope of line: {round(trendline[0],2)} mm/year', va="center", ha='center')
 
         if plotSettings["scatterRaw"]:
             plt.plot(year_raw, distance_raw, "bo",

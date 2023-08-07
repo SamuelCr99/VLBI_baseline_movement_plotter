@@ -7,6 +7,7 @@ from utility.find_station_names import find_station_names
 from utility.match_station_location_data import match_station_location_data
 import PySimpleGUI as sg
 import pandas as pd
+import matplotlib.pyplot as plt
 
 
 def create_plots(values):
@@ -83,6 +84,9 @@ def run_gui():
     layout = create_layout(stations)
     main_window = sg.Window('VLBI Baseline Plotter', layout,
                             margins=[20, 20], resizable=True, finalize=True)
+
+    # Fixes visual bug on Windows 11
+    plt.figure()
 
     scatterDisabled = False
     residualDisabled = False
