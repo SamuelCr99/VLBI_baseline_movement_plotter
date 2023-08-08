@@ -6,11 +6,10 @@ from plot_baseline import plot_lines
 from utility.find_station_names import find_station_names
 from utility.match_station_location_data import match_station_location_data
 import PySimpleGUI as sg
-import pandas as pd
 import matplotlib.pyplot as plt
 
 
-def create_plots(values):
+def create_plots(station1, station2, values):
     """
     Collects values which shall be plotted. 
 
@@ -24,8 +23,6 @@ def create_plots(values):
     No return values!
     """
 
-    station1 = values["first_station"][0].split('[')[0]
-    station2 = values["second_station"][0].split('[')[0]
     plotSettings = {
         "scatter": values["scatter"],
         "scatterRaw": values["scatterRaw"],
@@ -74,14 +71,15 @@ def run_gui():
     No return values!
     """
 
-    stations = find_station_names()
-    station_locations = match_station_location_data(stations)
+    stations, observations = find_station_names()
+    stations_observations = list(zip(stations,observations))
+    station_locations = match_station_location_data(stations_observations)
 
     # Define the layout of the GUI
     sg.theme("DarkBlue")
     sg.SetOptions(font=("Andalde Mono", 12))
 
-    layout = create_layout(stations)
+    layout = create_layout(stations_observations)
     main_window = sg.Window('VLBI Baseline Plotter', layout,
                             margins=[20, 20], resizable=True, finalize=True)
 
@@ -93,8 +91,10 @@ def run_gui():
     rolling_stdDisabled = False
     saveDisabled = True
     available_second_stations = []
-    descending_name = False
-    descending_size = True
+    sort_1_stat_reverse = True
+    sort_1_obs_reverse = True
+    sort_2_stat_reverse = True
+    sort_2_obs_reverse = True
 
     # Event loop for the GUI
     while True:
@@ -116,22 +116,74 @@ def run_gui():
             elif values["rolling_std"] and not (values["rolling_stdRaw"] or values["rolling_stdTrimmed"]):
                 sg.popup("Please select data to plot in std plot!",title="Warning")
             else: 
-                create_plots(values)
+                create_plots(selected_first_station, selected_second_station, values)
 
-        # Update the list of stations in the second list when user selects
-        # the first station, and update the text for chosen station 1
-        if event == "first_station":
-            available_second_stations = find_matching_stations(
-                values["first_station"][0])
-            # main_window['second_station'].update(available_second_stations)
-            main_window['second_station'].update(available_second_stations.apply(lambda row: f"{row.locations}[{row['size']}]", axis=1).to_list())
-            main_window["station1_text"].update(values["first_station"][0])
-            main_window["station2_text"].update("")
+        # Click on station 1 table
+        if event[0] == "first_station" and event[1] == "+CLICKED+":
+            
+            click_row, click_col = event[2]
 
-        # Update the text for chosen station 2
-        if event == "second_station":
-            main_window["station2_text"].update(
-                values["second_station"][0].split('[')[0])
+            # Unusable clicks
+            if click_row == None or click_col == None or click_col == -1:
+                continue
+            
+            # Sort
+            elif click_row == -1:
+
+                # Sort based on station name
+                if click_col == 0:
+                    stations_observations.sort(key=lambda row: row[0], reverse=sort_1_stat_reverse)
+                    sort_1_stat_reverse = not sort_1_stat_reverse
+                    sort_1_obs_reverse = True
+
+                # Sort based on observation count
+                elif click_col == 1:
+                    stations_observations.sort(key=lambda row: row[1], reverse=sort_1_obs_reverse)
+                    sort_1_obs_reverse = not sort_1_obs_reverse
+                    sort_1_stat_reverse = True
+
+                # Update the list
+                main_window["first_station"].update(stations_observations)
+            
+            # Update the list of stations in the second list when user selects
+            # the first station, and update the text for chosen station 1
+            else:
+                selected_first_station = stations_observations[click_row][0]
+                available_second_stations = find_matching_stations(selected_first_station)
+                main_window['second_station'].update(available_second_stations)
+                main_window["station1_text"].update(selected_first_station)
+                main_window["station2_text"].update("")
+
+        # Click on station 2 table
+        if event[0] == "second_station" and event[1] == "+CLICKED+":
+
+            click_row, click_col = event[2]
+
+            # Unusable clicks
+            if click_row == None or click_col == None or click_col == -1:
+                continue
+            
+            # Sort
+            elif click_row == -1:
+
+                # Sort based on station name
+                if click_col == 0:
+                    available_second_stations.sort(key=lambda row: row[0], reverse=sort_2_stat_reverse)
+                    sort_2_stat_reverse = not sort_2_stat_reverse
+                    sort_2_obs_reverse = True
+
+                # Sort based on observation count
+                elif click_col == 1:
+                    available_second_stations.sort(key=lambda row: row[1], reverse=sort_2_obs_reverse)
+                    sort_2_obs_reverse = not sort_2_obs_reverse
+                    sort_2_stat_reverse = True
+
+                # Update the list
+                main_window["second_station"].update(available_second_stations)
+
+            else:
+                selected_second_station = available_second_stations[click_row][0]
+                main_window["station2_text"].update(selected_second_station)
 
         # Disable/Enable the scatter plot settings
         if event == "scatter":
@@ -185,7 +237,7 @@ def run_gui():
 
             # Update the selection lists and text if a station was selected
             if selected_station:
-                main_window["first_station"].set_value([selected_station])
+                main_window["first_station"].update(select_rows = [selected_station])
                 available_second_stations = find_matching_stations(
                     selected_station)
                 main_window['second_station'].update(available_second_stations.apply(lambda row: f"{row.locations}[{row['size']}]", axis=1).to_list())
@@ -211,21 +263,6 @@ def run_gui():
                 main_window["second_station"].set_value(
                     [selected_station_text])
                 main_window["station2_text"].update(selected_station_text)
-
-        # Sort the second station list by name (first A-Z, then Z-A)
-        if event == "sort_name":
-            available_second_stations.sort_values(by='locations', inplace=True, ascending= descending_name)
-            main_window['second_station'].update(available_second_stations.apply(lambda row: f"{row.locations}[{row['size']}]", axis=1).to_list())
-            descending_name = not descending_name
-            descending_size = True
-        
-        # Sort the second station list by count (first descending, then
-        # ascending)
-        if event == "sort_count":
-            available_second_stations.sort_values(by='size', inplace=True, ascending = not descending_size)
-            main_window['second_station'].update(available_second_stations.apply(lambda row: f"{row.locations}[{row['size']}]", axis=1).to_list())
-            descending_size = not descending_size
-            descending_name = True
 
 if __name__ == '__main__':
     run_gui()

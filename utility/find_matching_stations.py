@@ -29,4 +29,4 @@ def find_matching_stations(station_to_match):
 
     station_count['locations'] = station_count['locations'].apply(lambda x: x.replace(station_to_match,'').replace('/', ''))
 
-    return station_count
+    return list(zip(station_count.locations.tolist(),station_count["size"].tolist()))

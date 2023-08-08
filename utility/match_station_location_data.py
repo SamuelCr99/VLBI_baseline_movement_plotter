@@ -10,6 +10,7 @@ def match_station_location_data(our_stations):
 
     for i, loc_row in location_rows.iterrows():
         for our_station in our_stations:
+            our_station = our_station[0]
             if loc_row['station'].lower() == our_station.strip('\n').rstrip('_').lower():
                 location_rows.at[i, 'station'] = our_station.strip('\n')
                 location_rows.at[i, 'updated'] = True

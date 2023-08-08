@@ -1,20 +1,23 @@
 import PySimpleGUI as sg
 
-LISTBOX_WIDTH = 45
+TABLE_WIDTH = 45
+TABLE_HEADINGS = ["Station","Observations"]
 
 def create_layout(stations):
     station1_col = [[sg.Text("First station:", justification="center")],
-                    [sg.Listbox(key='first_station', values=stations,
-                                size=(LISTBOX_WIDTH, 20), enable_events=True)],
+                    [sg.Table(stations, headings=TABLE_HEADINGS, key='first_station', 
+                                size=(TABLE_WIDTH, 20),
+                                select_mode=sg.SELECT_MODE_BROWSE,
+                                enable_click_events=True)],
                     [sg.Text("", key="station1_text"), sg.Push(),
                         sg.Button("Map", key="map_station1")]]
 
     station2_col = [[sg.Text("Second station:", justification="center")],
-                    [sg.Listbox(key='second_station', values=[],
-                               size=(LISTBOX_WIDTH, 20), enable_events=True)],
+                    [sg.Table([], headings=TABLE_HEADINGS, key='second_station', 
+                                size=(TABLE_WIDTH, 20),
+                                select_mode=sg.SELECT_MODE_BROWSE,
+                                enable_click_events=True)],
                     [sg.Text("", key="station2_text"), sg.Push(),
-                        sg.Button("Sort by name", key="sort_name"),
-                        sg.Button("Sort by count", key="sort_count"),
                         sg.Button("Map", key="map_station2")]]
 
     metric_settings_col = [[sg.Radio("Length", "metric", default=True,
