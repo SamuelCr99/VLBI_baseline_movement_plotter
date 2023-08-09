@@ -2,7 +2,7 @@
 
 ## Description
 
-Plots the baseline and other related quantities between two VLBI stations. The program was developed at NVI Inc. by Filip Herbertsson and Samuel Collier Ryder during a summer internship in 2023.
+Plots the length and other related quantities between two VLBI stations. The program was developed at NVI Inc. by Filip Herbertsson and Samuel Collier Ryder during a summer internship in 2023.
 
 ![](resources/gui_image.png "Image of the GUI")
 
@@ -25,7 +25,7 @@ The program has three plots it can produce: A scatter plot of the data with a tr
 While in the root folder of the project, you can start the GUI with
 
 ```bash
-$ python3 gui.py
+$ python3 baseline_plotter.py
 ```
 
 There are three tabs in the window: __Data selection__, __Plot settings__ and __View settings__.
@@ -41,24 +41,25 @@ When you have made all the necessary choices, you can go ahead and plot the data
 The plotter can be used in script mode with
 
 ```bash
-$ python3 plot_baseline.py <station1> <station2> <flag1> ... <flagN>
+$ python3 baseline_plotter.py <station1> <station2> <flag1> ... <flagN>
 ```
 
  Example: 
  ```bash
-$ python3 plot_baseline.py KOKEE___ WETTZELL --show_plots --no_trendline
+$ python3 baseline_plotter.py KOKEE___ WETTZELL --show_plots --no_trendline
  ```
  
  All available flags can be found using: 
  ```bash
- $ python3 plot_baseline.py --help 
+ $ python3 baseline_plotter.py --help 
  ```
 
 ### Change data
 
-If you want to change the data being plotted and add more sessions, you can do so by switching out the raw_data.csv file. If the new data contains more stations, be sure to include them and their position in the position.csv file.
+If you want to change the data being plotted and add more sessions, you can do so by switching out the data/raw_data.csv file. The file is delimited by whitespace and the necessary columns are "year", "locations", "length", "length_sigma", "transverse", "transverse_sigma", "horizontal", "horizontial_sigma".
 
- ## Known problems
-* If the map is used while plots are displayed the GUI will not update the selected station correctly. To force an update the map button must be pressed twice. 
-* When the map is present, the user is still able to press buttons in the main window.
+If the new data contains more stations, be sure to include them and their positions in the data/position.csv file. Otherwise, they can't be viewed on the map.
+
+## Known problems and limitations
 * The locations of some stations is not currently included in the position.csv file, and thus can not be selected from the map.
+* Currently, the flag to exclude raw data will exclude raw data from all plots.

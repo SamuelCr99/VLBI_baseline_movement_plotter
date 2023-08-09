@@ -1,8 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import math
-import argparse
-from utility.data_selection.find_matching_station_data import find_matching_station_data
 
 figure_num = 0
 
