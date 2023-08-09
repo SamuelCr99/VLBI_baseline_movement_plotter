@@ -237,10 +237,10 @@ def run_gui():
 
             # Update the selection lists and text if a station was selected
             if selected_station:
-                main_window["first_station"].update(select_rows = [selected_station])
+                main_window["first_station"].update(select_rows = [[i[0] for i in stations_observations].index(selected_station)])
                 available_second_stations = find_matching_stations(
                     selected_station)
-                main_window['second_station'].update(available_second_stations.apply(lambda row: f"{row.locations}[{row['size']}]", axis=1).to_list())
+                main_window['second_station'].update(available_second_stations)
                 main_window["station1_text"].update(selected_station)
                 main_window["station2_text"].update("")
 
