@@ -1,3 +1,5 @@
+assert __name__ != "__main__", "This file is not meant to be run, run baseline_plotter.py instead"
+
 from utility.gui.map import draw_map
 from utility.gui.layout import create_layout
 from utility.data_selection.find_matching_station_data import find_matching_station_data
@@ -94,6 +96,7 @@ def run_gui():
     layout = create_layout(first_station_list)
     main_window = sg.Window('VLBI Baseline Plotter', layout,
                             margins=[20, 20], resizable=True, finalize=True)
+    main_window.set_min_size((541,566))
 
     # Fixes visual bug on Windows 11
     plt.figure()
@@ -108,7 +111,7 @@ def run_gui():
 
         # Generate plots if user clicks plot
         if event == "Plot":
-            if not (values["first_station"] and values["second_station"]):
+            if not (selected_first_station and selected_second_station):
                 sg.popup("Please select two stations!",title="Warning")
             elif not (values["scatter"] or values["residual"] or values["rolling_std"]):
                 sg.popup("Please select plot type!",title="Warning")

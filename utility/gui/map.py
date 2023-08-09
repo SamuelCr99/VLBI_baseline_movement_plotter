@@ -94,21 +94,23 @@ def draw_map(station_coordinates, title):
     plt.axis('off')
     plt.tight_layout(pad=0)
 
-    # Add the events to the event loop
+    # Add labels to the stations
     cursor_hover = mplcursors.cursor(
             station_points, hover=mplcursors.HoverMode.Transient)
     cursor_hover.connect(
         "add", lambda sel: sel.annotation.set_text(station_coordinates.loc[sel.index].station))
+
+    # Add a "click"-listener to the stations
     cursor_click = mplcursors.cursor(station_points)
     cursor_click.connect("add", lambda sel: map_window.write_event_value("selected",sel.index))
 
     # Open the window
     layout = [[sg.Canvas(s=(1000,500), key='map_canvas', expand_x=True, expand_y=True)],
               [sg.Canvas(s=(1000,50), key="toolbar_canvas", expand_x=True, expand_y=False)]]
-    map_window = sg.Window(title, layout, resizable=False, finalize=True, modal=True)
+    map_window = sg.Window(title, layout, resizable=True, finalize=True, modal=True, margins=(0,0), element_padding=0)
     draw_fig(map_window['map_canvas'].TKCanvas, fig, map_window['toolbar_canvas'].TKCanvas)
 
-    # Event loop for window
+    # Wait for a selection or close
     while True:
         event, values = map_window.read()
         if event == "selected":

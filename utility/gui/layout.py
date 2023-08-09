@@ -1,6 +1,5 @@
 import PySimpleGUI as sg
 
-TABLE_LENGTH = 25
 TABLE_WIDTHS = [12,6]
 TABLE_HEADINGS = ["Station","Obs."]
 
@@ -40,8 +39,7 @@ def create_layout(stations):
                              [sg.Text("Choice of metric")],
                              [sg.Column(metric_settings_col, expand_x=True)]]
 
-    data_selection_tab = sg.Tab("Data selection", data_selection_column,
-                                expand_x=True, expand_y=True)
+    data_selection_tab = sg.Tab("Data selection", data_selection_column)
 
     scatter_settings_col = [[sg.Checkbox('Raw data', default=False,
                                          key='scatterRaw', expand_x=True)],
@@ -102,6 +100,5 @@ def create_layout(stations):
                    [sg.Push(), sg.Button('Plot'), sg.Button('Cancel')]]
 
     layout = [[sg.TabGroup([[data_selection_tab, settings_tab, view_tab]], expand_x=True, expand_y=True)],
-              [sg.VPush()],
               [sg.Column(buttons_col, expand_x=True, expand_y=False)]]
     return layout
