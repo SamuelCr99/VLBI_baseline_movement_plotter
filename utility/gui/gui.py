@@ -1,10 +1,10 @@
-from utility.matplotlibmap import draw_map
-from utility.find_matching_station_data import find_matching_station_data
-from utility.find_matching_stations import find_matching_stations
-from utility.layout import create_layout
-from plot_baseline import plot_lines
-from utility.find_station_names import find_station_names
-from utility.match_station_location_data import match_station_location_data
+from utility.gui.map import draw_map
+from utility.gui.layout import create_layout
+from utility.data_selection.find_matching_station_data import find_matching_station_data
+from utility.data_selection.find_matching_stations import find_matching_stations
+from utility.data_selection.find_station_names import find_station_names
+from utility.data_selection.match_station_location_data import match_station_location_data
+from utility.plot.plot_baseline import plot_lines
 import PySimpleGUI as sg
 import matplotlib.pyplot as plt
 

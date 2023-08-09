@@ -3,7 +3,7 @@ import pandas as pd
 
 def find_matching_stations(station_to_match):
     """
-    Finds all stations which share at least 1 VLBI station with given station.
+    Finds all stations which share at least one observation with given station.
 
     Loops through all VLBI data to find which VLBI stations have had at least 1 
     VLBI together with given station. Then counts the number of sessions.  

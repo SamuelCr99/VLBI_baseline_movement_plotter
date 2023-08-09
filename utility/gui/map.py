@@ -1,20 +1,34 @@
 import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+from matplotlib.backend_bases import MouseButton
 import numpy as np
 from PIL import Image
-from matplotlib.backend_bases import MouseButton
 import math
 import warnings
 import mplcursors
+import PySimpleGUI as sg
 warnings.filterwarnings('ignore')
 
 # Global variables
 STATION_DRAW_RADIUS = 60.0
-STATION_CLICK_RADIUS = 1
-global_station_location = None
-global_title = ""
-selected_station = ""
-mouse_on_station = ""
-text = None
+
+def draw_fig(canvas, fig, canvas_toolbar):
+    if canvas.children:
+        for child in canvas.winfo_children():
+            child.destroy()
+    if canvas_toolbar.children:
+        for child in canvas_toolbar.winfo_children():
+            child.destroy()
+    figure_canvas_agg = FigureCanvasTkAgg(fig, master=canvas)
+    toolbar = Toolbar(figure_canvas_agg, canvas_toolbar)
+    figure_canvas_agg.get_tk_widget().pack(side='right', fill='both', expand=1)
+    figure_canvas_agg.draw()
+    toolbar.update()
+
+
+class Toolbar(NavigationToolbar2Tk):
+    def __init__(self, *args, **kwargs):
+        super(Toolbar, self).__init__(*args, **kwargs)
 
 
 def map_to_fig(coordinates):
@@ -45,39 +59,6 @@ def fig_to_map(coordinates):
     return [map_x, map_y]
 
 
-
-
-def on_click(event):
-    '''
-    Selects location from left-click.
-
-    Selects the nearest station to the mouse click. If no station is near,
-    it sets it to an empty string.
-
-    Parameters:
-    event (event): All event information
-
-    Returns:
-    No return values!
-    '''
-    if event.button is MouseButton.LEFT:
-        global selected_station
-        x, y = fig_to_map([event.xdata, event.ydata])
-
-        # Sort the stations based on distance from mouse click
-        distance_to_stations = global_station_location.copy()
-        distance_to_stations["distance"] = distance_to_stations.apply(
-            lambda s: math.sqrt(math.pow(s["x"]-x, 2)+math.pow(s["y"]-y, 2)), axis=1)
-        distance_to_stations.sort_values("distance", inplace=True)
-        distance_to_stations.reset_index(inplace=True)
-
-        # Select the closest station if it is close enough (user clicked roughly
-        # on the circle) and exits map.
-        if distance_to_stations.loc[0].distance <= STATION_CLICK_RADIUS:
-            selected_station = distance_to_stations.loc[0]['station']
-            plt.close(global_title)
-
-
 def draw_map(station_coordinates, title):
     """
     Draws world map with station locations on to screen 
@@ -93,19 +74,6 @@ def draw_map(station_coordinates, title):
     Returns: 
     str: Returns the name of selected station 
     """
-    # Import global variables
-    global selected_station
-    global mouse_on_station
-    global global_station_location
-    global global_title
-
-    # Set global variables to empty string to avoid issues when using map many
-    # times
-    selected_station = ""
-    mouse_on_station = ""
-    global_station_location = station_coordinates
-    global_title = title
-
     # Prepare the coordinates for the stations
     station_coordinates["fig_x"] = station_coordinates.apply(
         lambda s: map_to_fig([s.x, s.y])[0], axis=1)
@@ -113,7 +81,7 @@ def draw_map(station_coordinates, title):
         lambda s: map_to_fig([s.x, s.y])[1], axis=1)
 
     # Draw the map
-    _, ax = plt.subplots(figsize=(10, 5), num=title)
+    fig, ax = plt.subplots(figsize=(10, 5), num=title)
     img = np.asarray(Image.open('resources/world_map.png'))
     ax.imshow(img)
 
@@ -127,15 +95,31 @@ def draw_map(station_coordinates, title):
     plt.tight_layout(pad=0)
 
     # Add the events to the event loop
-    plt.connect('button_press_event', on_click)
     cursor_hover = mplcursors.cursor(
             station_points, hover=mplcursors.HoverMode.Transient)
     cursor_hover.connect(
         "add", lambda sel: sel.annotation.set_text(station_coordinates.loc[sel.index].station))
+    cursor_click = mplcursors.cursor(station_points)
+    cursor_click.connect("add", lambda sel: map_window.write_event_value("selected",sel.index))
 
-    # Show the map
-    plt.show(block=True)
+    # Open the window
+    layout = [[sg.Canvas(s=(1000,500), key='map_canvas', expand_x=True, expand_y=True)],
+              [sg.Canvas(s=(1000,50), key="toolbar_canvas", expand_x=True, expand_y=False)]]
+    map_window = sg.Window(title, layout, resizable=False, finalize=True, modal=True)
+    draw_fig(map_window['map_canvas'].TKCanvas, fig, map_window['toolbar_canvas'].TKCanvas)
+
+    # Event loop for window
+    while True:
+        event, values = map_window.read()
+        if event == "selected":
+            selected_station = station_coordinates.station.iloc[values["selected"]]
+            plt.close(fig=title)
+            map_window.close()
+            break
+
+        elif event == sg.WINDOW_CLOSED:
+            selected_station = ""
+            break
 
     # Return the selected station
-    print(f'Selected station: {selected_station}')
     return selected_station
