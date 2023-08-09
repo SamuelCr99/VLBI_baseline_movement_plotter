@@ -50,9 +50,15 @@ def plot_lines(data, metric, plotSettings, viewSettings):
     sigma = []
 
     for i in range(len(data)):
-        distance.append(float(getattr(data.iloc[i], metric)))
-        year.append(float(getattr(data.iloc[i], "year")))
-        sigma.append(float(getattr(data.iloc[i], f"{metric}_sigma")))
+        distance_i = getattr(data.iloc[i], metric)
+        year_i = getattr(data.iloc[i], "year")
+        sigma_i = getattr(data.iloc[i], f"{metric}_sigma")
+
+        if is_float(distance_i) and is_float(year_i) and is_float(sigma_i):
+            distance.append(distance_i)
+            year.append(float(year_i))
+            sigma.append(float(sigma_i))
+
     stations = getattr(data.iloc[0], "locations")
     station1 = stations[:8]
     station2 = stations[9:]
@@ -84,7 +90,6 @@ def plot_lines(data, metric, plotSettings, viewSettings):
         residuals_trimmed = []
 
         for i in range(len(year)):
-            # Two sigma is considered "large" deviation, check with John
             if abs(residuals[i]) < standard_deviation*3:
                 distance_trimmed.append(distance[i])
                 year_trimmed.append(year[i])
@@ -152,7 +157,6 @@ def plot_lines(data, metric, plotSettings, viewSettings):
 
         plt.legend(loc="lower left")
         plt.xlabel('Year')
-        # Check with John that this is correct!
         plt.ylabel(f'{metric.capitalize()} [mm]')
         if (viewSettings["save"]):
             plt.savefig(
@@ -176,7 +180,6 @@ def plot_lines(data, metric, plotSettings, viewSettings):
         plt.axhline(y=0, color="red", linestyle="-")
         plt.legend(loc="lower left")
         plt.xlabel('Year')
-        # Check with John that this is correct!
         plt.ylabel(f'{metric.capitalize()} [mm]')
         if (viewSettings["save"]):
             plt.savefig(
@@ -200,7 +203,6 @@ def plot_lines(data, metric, plotSettings, viewSettings):
         plt.axhline(y=0, color="red", linestyle="-")
         plt.legend(loc="lower left")
         plt.xlabel('Year')
-        # Check with John that this is correct!
         plt.ylabel(f'{metric.capitalize()} [mm]')
         if (viewSettings["save"]):
             plt.savefig(

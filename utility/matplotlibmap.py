@@ -98,7 +98,6 @@ def draw_map(station_coordinates, title):
     global mouse_on_station
     global global_station_location
     global global_title
-    global text
 
     # Set global variables to empty string to avoid issues when using map many
     # times
@@ -113,12 +112,10 @@ def draw_map(station_coordinates, title):
     station_coordinates["fig_y"] = station_coordinates.apply(
         lambda s: map_to_fig([s.x, s.y])[1], axis=1)
 
-    # Draw the map and allow for updating objects
-    plt.ion()
+    # Draw the map
     _, ax = plt.subplots(figsize=(10, 5), num=title)
-    text = plt.text(0, 0, "", size=12, color="black", backgroundcolor="white")
     img = np.asarray(Image.open('resources/world_map.png'))
-    plt.imshow(img)
+    ax.imshow(img)
 
     # Draw station locations on to screen
     station_points = ax.scatter(station_coordinates.fig_x.to_list(),
@@ -141,5 +138,4 @@ def draw_map(station_coordinates, title):
 
     # Return the selected station
     print(f'Selected station: {selected_station}')
-    plt.ioff()
     return selected_station

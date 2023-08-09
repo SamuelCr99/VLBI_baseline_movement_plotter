@@ -31,5 +31,5 @@ def find_station_names():
         lines_with_station = lines_as_df[lines_as_df.locations.str.contains(station)]
         station_observations_list.append(len(lines_with_station.locations.tolist()))
 
-    return station_names_list, station_observations_list
+    return list(zip(station_names_list, station_observations_list))
 
