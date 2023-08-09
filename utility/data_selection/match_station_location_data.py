@@ -2,7 +2,16 @@ import pandas as pd
 
 def match_station_location_data(our_stations):
     """
-    Finds the location of all stations in stations.txt
+    Finds the location of all stations
+    
+    Goes through the data/position.csv file and returns the position of all
+    given stations.
+
+    Parameters:
+    our_stations(list(str)): The names of the stations that we want position of
+    
+    Returns:
+    DataFrame: Containing stations and their positiion
     """
 
     location_rows = pd.read_csv('data/position.csv')

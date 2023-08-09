@@ -9,10 +9,10 @@ def find_matching_stations(station_to_match):
     VLBI together with given station. Then counts the number of sessions.  
 
     Parameters:
-    arg1 (str): Name of station to match against.
+    arg1(str): Name of station to match against.
 
     Returns:
-    list[str]: List of all stations which match, with number of matches. 
+    list(list(str,int)): List of all stations which match, with number of matches.
     """
 
     # Read in CSV file as Pandas data frame

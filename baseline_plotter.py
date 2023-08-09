@@ -6,6 +6,23 @@ import matplotlib.pyplot as plt
 import sys
 
 if __name__ == '__main__':
+    """
+    To run in GUI mode simply run the script with no arguments 
+
+    In script mode the following arguments are available:
+    station1: str - Station name of first station in baseline (required)
+    station2: str - Station name of second station in baseline (required)
+    --no_scatter: bool - Don't plot scatter plot (optional)
+    --no_residual: bool - Don't plot residual plot (optional)
+    --no_rolling_std: bool - Don't plot rolling std plot (optional)
+    --no_raw: bool - Don't plot raw data (optional)
+    --no_trimmed: bool - Don't plot trimmed data (optional)
+    --no_trendline: bool - Don't plot trendline (optional)
+    --save_plots: bool - Save plots to file (optional)
+    --show_plots: bool - Show plots (optional)
+    --file_type: str - File type to save plots as (optional)
+    --window_size: float - Window size for rolling std (months) (optional)
+    """
     if len(sys.argv) == 1:
         run_gui()
 

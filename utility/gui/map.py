@@ -1,9 +1,7 @@
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
-from matplotlib.backend_bases import MouseButton
 import numpy as np
 from PIL import Image
-import math
 import warnings
 import mplcursors
 import PySimpleGUI as sg
@@ -61,9 +59,9 @@ def fig_to_map(coordinates):
 
 def draw_map(station_coordinates, title):
     """
-    Draws world map with station locations on to screen 
+    Draws world map with station locations to a new window
 
-    Draws a world map with station locations to the screen, the stations can
+    Draws a world map with station locations to a new window, the stations can
     then be hovered to display name and pressed to be selected. 
 
     Parameters: 

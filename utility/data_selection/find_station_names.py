@@ -5,13 +5,13 @@ def find_station_names():
     """
     Finds all station names 
 
-    Finds all different station names available in CSV file
+    Finds all different station used in the data/raw_data.csv file.
 
     Parameters:
     No parameters! 
 
     Returns:
-    No return values! 
+    list(list(str,int)): List of all stations, with number of observations.
     """
 
     # Read in CSV file as Pandas dataframes
