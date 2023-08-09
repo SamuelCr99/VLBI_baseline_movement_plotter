@@ -85,7 +85,7 @@ def plot_lines(data, metric, plotSettings, viewSettings):
 
         for i in range(len(year)):
             # Two sigma is considered "large" deviation, check with John
-            if abs(residuals[i]) < standard_deviation*2:
+            if abs(residuals[i]) < standard_deviation*3:
                 distance_trimmed.append(distance[i])
                 year_trimmed.append(year[i])
                 sigma_trimmed.append(sigma[i])
