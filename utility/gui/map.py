@@ -119,6 +119,8 @@ def draw_map(station_coordinates, title):
 
         elif event == sg.WINDOW_CLOSED:
             selected_station = ""
+            plt.close(fig=title)
+            map_window.close()
             break
 
     # Return the selected station
