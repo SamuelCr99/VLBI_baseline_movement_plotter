@@ -53,7 +53,7 @@ def plot_lines(data, metric, plotSettings, viewSettings):
         sigma_i = getattr(data.iloc[i], f"{metric}_sigma")
 
         if is_float(distance_i) and is_float(year_i) and is_float(sigma_i):
-            distance.append(distance_i)
+            distance.append(float(distance_i))
             year.append(float(year_i))
             sigma.append(float(sigma_i))
 
@@ -67,7 +67,6 @@ def plot_lines(data, metric, plotSettings, viewSettings):
 
     # Trim the data
     while (1):
-
         # Get the residuals from the trendline
         trendline = np.polyfit(year, distance, 1)
 
