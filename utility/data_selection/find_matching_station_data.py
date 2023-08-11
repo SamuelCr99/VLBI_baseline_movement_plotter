@@ -1,7 +1,7 @@
 import pandas as pd
 
 
-def find_matching_station_data(station1, station2):
+def find_matching_station_data(station1, station2, start_yr, end_yr):
     """
     Returns all data points containing both stations.
 
@@ -21,7 +21,15 @@ def find_matching_station_data(station1, station2):
     lines_as_df = pd.read_csv(
         'data/raw_data.csv', delim_whitespace=True, low_memory=False)
 
-    lines_of_interest = lines_as_df.loc[
+    # Pick out the stations
+    lines_as_df = lines_as_df.loc[
         (lines_as_df['locations'] == f"{station1}/{station2}") | (lines_as_df['locations'] == f"{station2}/{station1}")]
-    lines_of_interest.reset_index(inplace = True)
-    return lines_of_interest
+    
+    # Pick from the selected years
+    if start_yr:
+        lines_as_df = lines_as_df.loc[lines_as_df['year'] >= start_yr]
+    if end_yr:
+        lines_as_df = lines_as_df.loc[lines_as_df['year'] <= end_yr]
+
+    lines_as_df.reset_index(inplace = True)
+    return lines_as_df

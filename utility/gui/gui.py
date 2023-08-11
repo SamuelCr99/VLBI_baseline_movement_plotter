@@ -49,7 +49,12 @@ def create_plots(station1, station2, values):
     metric = "length" if values["length"] else (
         "transverse" if values["transverse"] else "horizontal")
 
-    matching_rows = find_matching_station_data(station1, station2)
+    if values["start_yr_btn"]: start_yr = values["start_yr"]
+    else: start_yr = None
+    if values["end_yr_btn"]: end_yr = values["end_yr"]
+    else: end_yr = None
+
+    matching_rows = find_matching_station_data(station1, station2, start_yr, end_yr)
     plot_lines(matching_rows, metric, plotSettings, viewSettings)
 
 
@@ -77,6 +82,8 @@ def run_gui():
     residualDisabled = False
     rolling_stdDisabled = False
     saveDisabled = True
+    start_yr_disabled = True
+    end_yr_disabled = True
     first_station_list = []
     second_station_list = []
     sort_1_stat_reverse = True
@@ -234,6 +241,15 @@ def run_gui():
                 disable_window_elements(
                     ["png", "jpg", "pdf", "svg"], True, main_window)
                 saveDisabled = True
+
+        # Disable/Enable start year
+        if event == "start_yr_btn":
+            start_yr_disabled = not start_yr_disabled
+            main_window["start_yr"].update(disabled=start_yr_disabled)
+        
+        if event == "end_yr_btn":
+            end_yr_disabled = not end_yr_disabled
+            main_window["end_yr"].update(disabled=end_yr_disabled)
 
         # Show the map for the first station
         if event == "map_station1":
