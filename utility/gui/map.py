@@ -5,10 +5,12 @@ from PIL import Image
 import warnings
 import mplcursors
 import PySimpleGUI as sg
+from math import sqrt
 warnings.filterwarnings('ignore')
 
 # Global variables
 STATION_DRAW_RADIUS = 60.0
+MIN_STATION_DISTANCE = 2
 
 def draw_fig(canvas, fig, canvas_toolbar):
     if canvas.children:
@@ -42,6 +44,28 @@ def map_to_fig(coordinates):
 
     return [fig_x, fig_y]
 
+
+def move_coords_too_close(coords):
+    for index, coord in coords.iterrows():
+        x = coord.pixel_coordinates[0]
+        y = coord.pixel_coordinates[1]
+
+        check = True
+
+        while check:
+            check = False
+            for coord_other in coords.pixel_coordinates:
+                x_other = coord_other[0]
+                y_other = coord_other[1]
+                x_delta = x_other-x
+                y_delta = y_other-y
+                distance = sqrt((x_delta)**2 + (y_delta)**2)
+
+                if distance < MIN_STATION_DISTANCE:
+                    x += MIN_STATION_DISTANCE
+                    check = True
+                    break
+        coords.pixel_coordinates.iloc[index] = [x,y]
 
 def fig_to_map(coordinates):
     # Converts figure coordinates to map coordinates
@@ -77,8 +101,7 @@ def draw_map(station_coordinates, title):
         lambda s: map_to_fig([s.x, s.y]), axis=1)
     
     # Move points that are too close to other points
-    station_coordinates["pixel_coordinates"] = station_coordinates.apply(
-        lambda s: map_to_fig([s.x, s.y]), axis=1)
+    move_coords_too_close(station_coordinates)
 
     # Draw the map
     fig, ax = plt.subplots(figsize=(10, 5), num=title)
