@@ -73,21 +73,24 @@ def draw_map(station_coordinates, title):
     str: Returns the name of selected station 
     """
     # Prepare the coordinates for the stations
-    station_coordinates["fig_x"] = station_coordinates.apply(
-        lambda s: map_to_fig([s.x, s.y])[0], axis=1)
-    station_coordinates["fig_y"] = station_coordinates.apply(
-        lambda s: map_to_fig([s.x, s.y])[1], axis=1)
+    station_coordinates["pixel_coordinates"] = station_coordinates.apply(
+        lambda s: map_to_fig([s.x, s.y]), axis=1)
+    
+    # Move points that are too close to other points
+    station_coordinates["pixel_coordinates"] = station_coordinates.apply(
+        lambda s: map_to_fig([s.x, s.y]), axis=1)
 
     # Draw the map
     fig, ax = plt.subplots(figsize=(10, 5), num=title)
     img = np.asarray(Image.open('resources/world_map.png'))
     ax.imshow(img)
 
+    pixel_x = [i[0] for i in station_coordinates.pixel_coordinates]
+    pixel_y = [i[1] for i in station_coordinates.pixel_coordinates]
+
     # Draw station locations on to screen
-    station_points = ax.scatter(station_coordinates.fig_x.to_list(),
-               station_coordinates.fig_y.to_list(), STATION_DRAW_RADIUS, "black")
-    ax.scatter(station_coordinates.fig_x.to_list(
-    ), station_coordinates.fig_y.to_list(), STATION_DRAW_RADIUS*0.5, "white")
+    station_points = ax.scatter(pixel_x, pixel_y, STATION_DRAW_RADIUS, "black")
+    ax.scatter(pixel_x, pixel_y, STATION_DRAW_RADIUS*0.5, "white")
 
     plt.axis('off')
     plt.tight_layout(pad=0)
