@@ -41,10 +41,10 @@ def create_layout(stations):
                              [sg.Column(metric_settings_col, expand_x=True)],
                              [sg.HorizontalSeparator(pad=10)],
                              [sg.Checkbox("Start year", pad=[[5, 0], [5, 0]], key="start_yr_btn", enable_events=True)],
-                             [sg.Slider(range=(1950, 2023), resolution=0.1, orientation="h", default_value=1950, pad=[[45, 0], [10, 10]], key="start_yr", disabled=True)],
+                             [sg.Slider(range=(1950, 2023), resolution=0.1, orientation="h", default_value=1950, pad=[[45, 20], [10, 10]], key="start_yr", disabled=True, expand_x=True)],
                              [sg.HorizontalSeparator(pad=10)],
                              [sg.Checkbox("End year", pad=[[5, 0], [5, 0]], key="end_yr_btn", enable_events=True)],
-                             [sg.Slider(range=(1950, 2023), resolution=0.1, orientation="h", default_value=2023, pad=[[45, 0], [10, 10]], key="end_yr", disabled=True)]]
+                             [sg.Slider(range=(1950, 2023), resolution=0.1, orientation="h", default_value=2023, pad=[[45, 20], [10, 10]], key="end_yr", disabled=True, expand_x=True)]]
 
     data_selection_tab = sg.Tab("Data selection", [[sg.Column(data_selection_column, expand_x=True, expand_y=True)]])
 

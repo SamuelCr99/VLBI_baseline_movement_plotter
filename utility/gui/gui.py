@@ -103,7 +103,7 @@ def run_gui():
     layout = create_layout(first_station_list)
     main_window = sg.Window('VLBI Baseline Plotter', layout,
                             margins=[20, 20], resizable=True, finalize=True)
-    main_window.set_min_size((541,566))
+    main_window.set_min_size((540,730))
 
     # Fixes visual bug on Windows 11
     plt.figure()
