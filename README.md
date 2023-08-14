@@ -63,3 +63,7 @@ If the new data contains more stations, be sure to include them and their positi
 ## Known problems and limitations
 * The locations of some stations is not currently included in the position.csv file, and thus can not be selected from the map.
 * Currently, the flags to exclude raw data and trimmed data will exclude it from all plots.
+
+## Acknowledgements
+
+The data that is being plotted was supplied by John Gipson.
