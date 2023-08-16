@@ -18,6 +18,7 @@ if __name__ == '__main__':
     --no_raw: bool - Don't plot raw data (optional)
     --no_trimmed: bool - Don't plot trimmed data (optional)
     --no_trendline: bool - Don't plot trendline (optional)
+    --outlier_lim: float - Limit for outliers in standard deviations (optional)
     --save_plots: bool - Save plots to file (optional)
     --show_plots: bool - Show plots (optional)
     --file_type: str - File type to save plots as (optional)
@@ -40,6 +41,7 @@ if __name__ == '__main__':
         parser.add_argument('--no_raw', action='store_true', help="don't plot raw data")
         parser.add_argument('--no_trimmed', action='store_true', help="don't plot trimmed data")
         parser.add_argument('--no_trendline', action='store_true', help="don't plot trendline")
+        parser.add_argument('--outlier_lim', type=float, default=3, help="limit for outliers in standard deviations")
 
         parser.add_argument('--save_plots', action='store_true', help="save plots to file")
         parser.add_argument('--show_plots', action='store_true', help="show plots")
@@ -53,6 +55,7 @@ if __name__ == '__main__':
             "scatterRaw": not args.no_raw,
             "scatterTrimmed": not args.no_trimmed,
             "scatterTrendline": not args.no_trendline,
+            "scatterLim": args.outlier_lim,
             "residual": not args.no_residual,
             "residualRaw": not args.no_raw,
             "residualTrimmed": not args.no_trimmed,

@@ -30,6 +30,7 @@ def create_plots(station1, station2, values):
         "scatterRaw": values["scatterRaw"],
         "scatterTrimmed": values["scatterTrimmed"],
         "scatterTrendline": values["scatterTrendline"],
+        "scatterLim": values["scatterLim"],
         "residual": values["residual"],
         "residualRaw": values["residualRaw"],
         "residualTrimmed": values["residualTrimmed"],

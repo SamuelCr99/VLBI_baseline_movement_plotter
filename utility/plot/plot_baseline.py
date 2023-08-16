@@ -87,11 +87,13 @@ def plot_lines(data, metric, plotSettings, viewSettings):
         residuals_trimmed = []
 
         for i in range(len(year)):
-            if abs(residuals[i]) < standard_deviation*3:
+            if abs(residuals[i]) <= standard_deviation*plotSettings["scatterLim"]:
                 distance_trimmed.append(distance[i])
                 year_trimmed.append(year[i])
                 sigma_trimmed.append(sigma[i])
                 residuals_trimmed.append(residuals[i])
+        
+        # Stop if we didn't remove any outliers
         if len(year) == len(year_trimmed):
             break
 

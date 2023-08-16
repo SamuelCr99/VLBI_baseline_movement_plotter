@@ -53,7 +53,11 @@ def create_layout(stations):
                             [sg.Checkbox('Trimmed data', default=True,
                                          key='scatterTrimmed', expand_x=True)],
                             [sg.Checkbox('Trend line', default=True,
-                                         key='scatterTrendline', expand_x=True)]]
+                                         key='scatterTrendline', expand_x=True)],
+                            [sg.Text("Outlier limit (σ)", pad=[[0, 0], [22, 0]]),
+                             sg.Slider(range=(1,6), resolution=1,
+                                       orientation="h", default_value=3,
+                                       key="scatterLim")]]
 
     residual_settings_col = [[sg.Checkbox('Raw data', default=False,
                                           key='residualRaw', expand_x=True)],
