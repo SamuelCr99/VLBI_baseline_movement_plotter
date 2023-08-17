@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import math
+import mplcursors
 
 figure_num = 0
 
@@ -46,11 +47,14 @@ def plot_lines(data, metric, plotSettings, viewSettings):
     distance = []
     year = []
     sigma = []
+    info = []
 
     for i in range(len(data)):
         distance_i = getattr(data.iloc[i], metric)
         year_i = getattr(data.iloc[i], "year")
         sigma_i = getattr(data.iloc[i], f"{metric}_sigma")
+        info_i = getattr(data.iloc[i], "date")
+        info.append(info_i)
 
         if is_float(distance_i) and is_float(year_i) and is_float(sigma_i):
             distance.append(float(distance_i))
@@ -64,6 +68,7 @@ def plot_lines(data, metric, plotSettings, viewSettings):
     distance_raw = distance
     year_raw = year
     sigma_raw = sigma
+    info_raw = info
 
     # Trim the data
     while (1):
@@ -84,6 +89,7 @@ def plot_lines(data, metric, plotSettings, viewSettings):
         distance_trimmed = []
         year_trimmed = []
         sigma_trimmed = []
+        info_trimmed = []
         residuals_trimmed = []
 
         for i in range(len(year)):
@@ -91,6 +97,7 @@ def plot_lines(data, metric, plotSettings, viewSettings):
                 distance_trimmed.append(distance[i])
                 year_trimmed.append(year[i])
                 sigma_trimmed.append(sigma[i])
+                info_trimmed.append(info[i])
                 residuals_trimmed.append(residuals[i])
         
         # Stop if we didn't remove any outliers
@@ -100,6 +107,7 @@ def plot_lines(data, metric, plotSettings, viewSettings):
         year = year_trimmed
         sigma = sigma_trimmed
         distance = distance_trimmed
+        info = info_trimmed
 
     residuals_raw = []
     for i in range(len(year_raw)):
@@ -143,16 +151,25 @@ def plot_lines(data, metric, plotSettings, viewSettings):
             0.5, 0.8, f'Slope of line: {round(trendline[0],2)} mm/year', va="center", ha='center')
 
         if plotSettings["scatterRaw"]:
-            plt.plot(year_raw, distance_raw, "bo",
+            scatter_raw = plt.plot(year_raw, distance_raw, "bo",
                      markersize=3, label="Raw data")
 
         if plotSettings["scatterTrimmed"]:
-            plt.plot(year_trimmed, distance_trimmed, "ko",
+            scatter_trimmed = plt.plot(year_trimmed, distance_trimmed, "ko",
                      markersize=3, label="Trimmed data")
 
         if plotSettings["scatterTrendline"]:
             plt.axline([year_trimmed[0], trendline[0]*year_trimmed[0]+trendline[1]],
                        slope=trendline[0], color="red", label="Trend line")
+
+        # Adds arrows and annotations to all points
+        if plotSettings["scatterRaw"] or plotSettings["scatterTrimmed"]:
+            scatter = scatter_raw if plotSettings["scatterRaw"] else scatter_trimmed
+            info = info_raw if plotSettings["scatterRaw"] else info_trimmed
+            scatter_cursor = mplcursors.cursor(
+                scatter, hover=mplcursors.HoverMode.Transient)
+            scatter_cursor.connect(
+                "add", lambda sel: sel.annotation.set_text(info[sel.index]))
 
         plt.legend(loc="lower left")
         plt.xlabel('Year')
@@ -169,12 +186,21 @@ def plot_lines(data, metric, plotSettings, viewSettings):
             0.95, 0.5, f'Number of raw datapoints: {len(year_raw)}\n Number of trimmed datapoints: {len(year_trimmed)}', va="center", ha='center', rotation=90)
 
         if plotSettings["residualRaw"]:
-            plt.plot(year_raw, residuals_raw, "bo",
+            residual_raw = plt.plot(year_raw, residuals_raw, "bo",
                      markersize=3, label="Raw data")
 
         if plotSettings["residualTrimmed"]:
-            plt.plot(year_trimmed, residuals_trimmed, "ko",
+            residual_trimmed = plt.plot(year_trimmed, residuals_trimmed, "ko",
                      markersize=3, label="Trimmed data")
+            
+        # Adds arrows and annotations to all points
+        if plotSettings["residualRaw"] or plotSettings["residualTrimmed"]:
+            residual = residual_raw if plotSettings["residualRaw"] else residual_trimmed
+            info = info_raw if plotSettings["residualRaw"] else info_trimmed
+            residual_cursor = mplcursors.cursor(
+                residual, hover=mplcursors.HoverMode.Transient)
+            residual_cursor.connect(
+                "add", lambda sel: sel.annotation.set_text(info[sel.index]))
 
         plt.axhline(y=0, color="red", linestyle="-")
         plt.legend(loc="lower left")
