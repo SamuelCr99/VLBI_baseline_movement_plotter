@@ -71,6 +71,7 @@ def plot_lines(data, metric, plotSettings, viewSettings):
     info_raw = info
 
     # Trim the data
+    iter = 0
     while (1):
         # Get the residuals from the trendline
         trendline = np.polyfit(year, distance, 1)
@@ -99,7 +100,7 @@ def plot_lines(data, metric, plotSettings, viewSettings):
                 sigma_trimmed.append(sigma[i])
                 info_trimmed.append(info[i])
                 residuals_trimmed.append(residuals[i])
-        
+
         # Stop if we didn't remove any outliers
         if len(year) == len(year_trimmed):
             break
@@ -108,6 +109,7 @@ def plot_lines(data, metric, plotSettings, viewSettings):
         sigma = sigma_trimmed
         distance = distance_trimmed
         info = info_trimmed
+        iter += 1
 
     residuals_raw = []
     for i in range(len(year_raw)):
@@ -148,7 +150,7 @@ def plot_lines(data, metric, plotSettings, viewSettings):
         plt.figtext(
             0.95, 0.5, f'Number of raw datapoints: {len(year_raw)}\n Number of trimmed datapoints: {len(year_trimmed)}', va="center", ha='center', rotation=90)
         plt.figtext(
-            0.5, 0.8, f'Slope of line: {round(trendline[0],2)} mm/year', va="center", ha='center')
+            0.5, 0.8, f'Slope of line: {round(trendline[0],2)} mm/year\nIterations: {iter}', va="center", ha='center')
 
         if plotSettings["scatterRaw"]:
             scatter_raw = plt.plot(year_raw, distance_raw, "bo",
