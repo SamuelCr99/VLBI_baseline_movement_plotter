@@ -42,6 +42,8 @@ if __name__ == '__main__':
         parser.add_argument('--no_trimmed', action='store_true', help="don't plot trimmed data")
         parser.add_argument('--no_trendline', action='store_true', help="don't plot trendline")
         parser.add_argument('--outlier_lim', type=float, default=3, help="limit for outliers in standard deviations")
+        parser.add_argument('--start', type=float, default=1950, help="start year")
+        parser.add_argument('--end', type=float, default=2023, help="end year")
 
         parser.add_argument('--save_plots', action='store_true', help="save plots to file")
         parser.add_argument('--show_plots', action='store_true', help="show plots")
@@ -71,7 +73,7 @@ if __name__ == '__main__':
             "saveFormat": args.file_type
         }
 
-        data = find_matching_station_data(args.station1, args.station2)
+        data = find_matching_station_data(args.station1, args.station2, args.start, args.end)
         plot_lines(data, 'length', plotSettings, viewSettings)
         if args.show_plots:
             plt.show()
