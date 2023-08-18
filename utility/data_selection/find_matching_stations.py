@@ -1,4 +1,5 @@
 import pandas as pd
+import os
 
 
 def find_matching_stations(station_to_match):
@@ -14,9 +15,11 @@ def find_matching_stations(station_to_match):
     Returns:
     list(list(str,int)): List of all stations which match, with number of matches.
     """
+    
+    abs_path = os.path.dirname(__file__)
 
     # Read in CSV file as Pandas data frame
-    lines_as_df = pd.read_csv("data/raw_data.bas", delim_whitespace=True, low_memory=False,
+    lines_as_df = pd.read_csv(f"{abs_path}/../../data/raw_data.bas", delim_whitespace=True, low_memory=False,
                               names=["BAS","date","epoch","year","locations","length","length_sigma","transverse","transverse_sigma","horizontal","horizontal_sigma"], skiprows=2)
 
     lines_of_interest = lines_as_df.loc[

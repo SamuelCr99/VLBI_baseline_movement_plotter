@@ -56,6 +56,10 @@ def create_plots(station1, station2, values, compat_mode):
     else: end_yr = None
 
     matching_rows = find_matching_station_data(station1, station2, start_yr, end_yr)
+
+    if len(matching_rows) == 0:
+        return "no_matches"
+
     plot_lines(matching_rows, metric, plotSettings, viewSettings, compat_mode)
 
 
@@ -131,7 +135,8 @@ def run_gui(compat_mode):
             elif values["rolling_std"] and not (values["rolling_stdRaw"] or values["rolling_stdTrimmed"]):
                 sg.popup("Please select data to plot in std plot!",title="Warning")
             else: 
-                create_plots(selected_first_station, selected_second_station, values, compat_mode)
+                if create_plots(selected_first_station, selected_second_station, values, compat_mode) == "no_matches":
+                    sg.popup("No matches for that time interval")
 
         # Click on station 1 table
         if event[0] == "first_station" and event[1] == "+CLICKED+":

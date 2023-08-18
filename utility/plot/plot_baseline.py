@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import math
 import mplcursors
+import os
 
 figure_num = 0
 
@@ -42,6 +43,7 @@ def plot_lines(data, metric, plotSettings, viewSettings, compat_mode=False):
     """
 
     global figure_num
+    abs_path = os.path.dirname(__file__)
 
     # Read in the data
     distance = []
@@ -178,7 +180,7 @@ def plot_lines(data, metric, plotSettings, viewSettings, compat_mode=False):
         plt.ylabel(f'{metric.capitalize()} [mm]')
         if (viewSettings["save"]):
             plt.savefig(
-                f"plots/Scatter_{station1}-{station2}_{metric}.{viewSettings['saveFormat']}", format=viewSettings["saveFormat"])
+                f"{abs_path}/../../plots/Scatter_{station1}-{station2}_{metric}.{viewSettings['saveFormat']}", format=viewSettings["saveFormat"])
 
     if plotSettings["residual"]:
         figure_num += 1
@@ -210,7 +212,7 @@ def plot_lines(data, metric, plotSettings, viewSettings, compat_mode=False):
         plt.ylabel(f'{metric.capitalize()} [mm]')
         if (viewSettings["save"]):
             plt.savefig(
-                f"plots/Residual_{station1}-{station2}_{metric}.{viewSettings['saveFormat']}", format=viewSettings["saveFormat"])
+                f"{abs_path}/../../plots/Residual_{station1}-{station2}_{metric}.{viewSettings['saveFormat']}", format=viewSettings["saveFormat"])
 
     if plotSettings["rolling_std"]:
         figure_num += 1
@@ -233,7 +235,7 @@ def plot_lines(data, metric, plotSettings, viewSettings, compat_mode=False):
         plt.ylabel(f'{metric.capitalize()} [mm]')
         if (viewSettings["save"]):
             plt.savefig(
-                f"plots/Rolling_std_{station1}-{station2}_{metric}.{viewSettings['saveFormat']}", format=viewSettings["saveFormat"])
+                f"{abs_path}/../../plots/Rolling_std_{station1}-{station2}_{metric}.{viewSettings['saveFormat']}", format=viewSettings["saveFormat"])
     if viewSettings["display"]:
         plt.show(block=compat_mode)
     else:

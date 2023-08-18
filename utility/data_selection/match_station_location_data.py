@@ -1,4 +1,5 @@
 import pandas as pd
+import os
 
 def match_station_location_data(our_stations):
     """
@@ -14,7 +15,8 @@ def match_station_location_data(our_stations):
     DataFrame: Containing stations and their positiion
     """
 
-    location_rows = pd.read_csv('data/position.csv')
+    abs_path = os.path.dirname(__file__)
+    location_rows = pd.read_csv(f'{abs_path}/../../data/position.csv')
     location_rows['updated'] = False
 
     for i, loc_row in location_rows.iterrows():

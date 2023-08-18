@@ -1,4 +1,5 @@
 import pandas as pd
+import os
 
 
 def find_station_names():
@@ -14,8 +15,9 @@ def find_station_names():
     list(list(str,int)): List of all stations, with number of observations.
     """
 
+    abs_path = os.path.dirname(__file__)
     # Read in CSV file as Pandas dataframes
-    lines_as_df = pd.read_csv("data/raw_data.bas", delim_whitespace=True, low_memory=False,
+    lines_as_df = pd.read_csv(f"{abs_path}/../../data/raw_data.bas", delim_whitespace=True, low_memory=False,
                               names=["BAS","date","epoch","year","locations","length","length_sigma","transverse","transverse_sigma","horizontal","horizontal_sigma"], skiprows=2)
 
     # Split the stations into two columns
