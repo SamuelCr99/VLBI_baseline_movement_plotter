@@ -23,7 +23,7 @@ def is_float(string):
         return False
 
 
-def plot_lines(data, metric, plotSettings, viewSettings):
+def plot_lines(data, metric, plotSettings, viewSettings, compat_mode=False):
     """
     Plots the given metric in the matching_rows.csv file using the plotSettings.
 
@@ -235,6 +235,6 @@ def plot_lines(data, metric, plotSettings, viewSettings):
             plt.savefig(
                 f"plots/Rolling_std_{station1}-{station2}_{metric}.{viewSettings['saveFormat']}", format=viewSettings["saveFormat"])
     if viewSettings["display"]:
-        plt.show(block=False)
+        plt.show(block=compat_mode)
     else:
         plt.close("all")

@@ -11,7 +11,7 @@ import PySimpleGUI as sg
 import matplotlib.pyplot as plt
 
 
-def create_plots(station1, station2, values):
+def create_plots(station1, station2, values, compat_mode):
     """
     Collects values which shall be plotted. 
 
@@ -56,7 +56,7 @@ def create_plots(station1, station2, values):
     else: end_yr = None
 
     matching_rows = find_matching_station_data(station1, station2, start_yr, end_yr)
-    plot_lines(matching_rows, metric, plotSettings, viewSettings)
+    plot_lines(matching_rows, metric, plotSettings, viewSettings, compat_mode)
 
 
 def disable_window_elements(elements_to_update, state, window):
@@ -65,7 +65,7 @@ def disable_window_elements(elements_to_update, state, window):
         window[element].update(disabled=state)
 
 
-def run_gui():
+def run_gui(compat_mode):
     """
     Runs the GUI.
 
@@ -73,7 +73,8 @@ def run_gui():
     change which parameter to plot.
 
     Parameters:
-    No parameters!
+    compat_mode: Compatibility mode, if True plots will block the event loop, this
+    increases compatibility across computers. 
 
     Returns:
     No return values!
@@ -130,7 +131,7 @@ def run_gui():
             elif values["rolling_std"] and not (values["rolling_stdRaw"] or values["rolling_stdTrimmed"]):
                 sg.popup("Please select data to plot in std plot!",title="Warning")
             else: 
-                create_plots(selected_first_station, selected_second_station, values)
+                create_plots(selected_first_station, selected_second_station, values, compat_mode)
 
         # Click on station 1 table
         if event[0] == "first_station" and event[1] == "+CLICKED+":
