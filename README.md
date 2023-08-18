@@ -28,6 +28,13 @@ While in the root folder of the project, you can start the GUI with
 $ python3 baseline_plotter.py
 ```
 
+**NOTE:** When running the program on a virtual desktop there might be an issue with the plots not displaying. This 
+can be fixed by running the program with the following command:
+
+```bash
+$ python3 baseline_plotter.py --compat_mode
+```
+
 There are three tabs in the window: __Data selection__, __Plot settings__ and __View settings__.
 
 1. In __Data selection__, you choose which stations you want to plot the baseline between and what metric of the baseline you want to plot. Station selection can either be done through the lists, or using the a map which can be opened with the "Map" button. When selecting the second station, you will see a number beside the name of each station representing the amount of sessions in the data that contains both stations. It is advised to choose stations that have as many sessions in common as possible. It is possible to order the list after this number, or in alphabetical order.
