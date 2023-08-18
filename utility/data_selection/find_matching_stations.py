@@ -16,8 +16,8 @@ def find_matching_stations(station_to_match):
     """
 
     # Read in CSV file as Pandas data frame
-    lines_as_df = pd.read_csv(
-        'data/raw_data.csv', delim_whitespace=True, low_memory=False)
+    lines_as_df = pd.read_csv("data/raw_data.bas", delim_whitespace=True, low_memory=False,
+                              names=["BAS","date","epoch","year","locations","length","length_sigma","transverse","transverse_sigma","horizontal","horizontal_sigma"], skiprows=2)
 
     lines_of_interest = lines_as_df.loc[
         lines_as_df['locations'].str.contains(station_to_match)]

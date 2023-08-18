@@ -56,13 +56,14 @@ $ python3 baseline_plotter.py KOKEE___ WETTZELL --show_plots --no_trendline
 
 ### Change data
 
-If you want to change the data being plotted and add more sessions, you can do so by switching out the data/raw_data.csv file. The file is delimited by whitespace and the necessary columns are "year", "locations", "length", "length_sigma", "transverse", "transverse_sigma", "horizontal", "horizontial_sigma".
+If you want to change the data being plotted and add more sessions, you can do so by switching out the data/raw_data.bas. The data file should be a solve solution containing the same type of information as the current file contains. I.e, it should divided into the same columns, with whitespace as the delimiter, and two rows in the beginning describing the file.
 
-If the new data contains more stations, be sure to include them and their positions in the data/position.csv file. Otherwise, they can't be viewed on the map.
+If the new data contains more stations, be sure to include them and their positions in the data/position.csv file. Otherwise, they can't be viewed on the map, but they will still be selectable from the selection columns.
 
 ## Known problems and limitations
 * The locations of some stations is not currently included in the position.csv file, and thus can not be selected from the map.
 * Currently, the flags to exclude raw data and trimmed data will exclude it from all plots.
+* Not all behaviour in the data can be easily described by a trend line. Future work should include sinusoidal components to capture seasonal terms.
 
 ## Acknowledgements
 
