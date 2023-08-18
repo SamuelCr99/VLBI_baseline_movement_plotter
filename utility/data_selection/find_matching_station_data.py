@@ -1,5 +1,5 @@
 import pandas as pd
-
+import os
 
 def find_matching_station_data(station1, station2, start_yr, end_yr):
     """
@@ -17,8 +17,9 @@ def find_matching_station_data(station1, station2, start_yr, end_yr):
     lines_of_interest (DataFrame): All rows of data that contains both stations
     """
 
+    abs_path = os.path.dirname(__file__)
     # Read in CSV file as Pandas dataframes
-    lines_as_df = pd.read_csv("data/raw_data.bas", delim_whitespace=True, low_memory=False,
+    lines_as_df = pd.read_csv(f"{abs_path}/../../data/raw_data.bas", delim_whitespace=True, low_memory=False,
                               names=["BAS","date","epoch","year","locations","length","length_sigma","transverse","transverse_sigma","horizontal","horizontal_sigma"], skiprows=2)
 
     # Pick out the stations

@@ -13,7 +13,7 @@ To install the program, you need to clone the GitHub repository and install the 
 
 ```bash
 $ git clone https://github.com/SamuelCr99/VLBI_baseline_movement_plotter.git
-$ pip install pandas matplotlib PySimpleGUI Pillow
+$ pip install -r requirements.txt
 ```
 
 ## How to use
